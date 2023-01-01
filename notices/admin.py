@@ -4,4 +4,8 @@ from .models import Notice
 
 @admin.register(Notice)
 class NoticeAdmin(admin.ModelAdmin):
-    pass
+
+    list_display = (
+        "title",
+        "created_at",
+    )
