@@ -50,6 +50,7 @@ CUSTOM_APPS = [
     "notices.apps.NoticesConfig",
     "contacts.apps.ContactsConfig",
     "complaints.apps.ComplaintsConfig",
+    "schedule.apps.ScheduleConfig",
 ]
 
 INSTALLED_APPS = SYSTEM_APPS + CUSTOM_APPS
