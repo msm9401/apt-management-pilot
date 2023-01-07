@@ -4,7 +4,10 @@ from .models import Question, Choice
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-    pass
+
+    list_display = ("title", "created_at", "end_date", "remaining_time", "status")
+
+    list_filter = ("status",)
 
 
 @admin.register(Choice)
@@ -13,3 +16,5 @@ class ChoiceAdmin(admin.ModelAdmin):
     list_display = ("question", "title", "votes")
 
     list_filter = ("question",)
+
+    ordering = ["-votes"]
