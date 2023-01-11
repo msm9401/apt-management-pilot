@@ -52,6 +52,7 @@ CUSTOM_APPS = [
     "complaints.apps.ComplaintsConfig",
     "schedule.apps.ScheduleConfig",
     "polls.apps.PollsConfig",
+    "houses.apps.HousesConfig",
 ]
 
 INSTALLED_APPS = SYSTEM_APPS + CUSTOM_APPS
