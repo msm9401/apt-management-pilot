@@ -5,8 +5,8 @@ from .models import Schedule
 @admin.register(Schedule)
 class ScheduleAdmin(admin.ModelAdmin):
 
-    list_display = (
-        "title",
-        "start_date",
-        "end_date",
-    )
+    list_display = ("title", "start_date", "end_date", "house")
+
+    search_fields = ["house"]
+
+    autocomplete_fields = ["house"]

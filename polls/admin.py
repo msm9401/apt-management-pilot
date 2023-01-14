@@ -5,9 +5,20 @@ from .models import Question, Choice
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
 
-    list_display = ("title", "created_at", "end_date", "remaining_time", "status")
+    list_display = (
+        "title",
+        "created_at",
+        "end_date",
+        "remaining_time",
+        "status",
+        "house",
+    )
 
-    list_filter = ("status",)
+    list_filter = ("status", "house")
+
+    search_fields = ["house"]
+
+    autocomplete_fields = ["house"]
 
 
 @admin.register(Choice)

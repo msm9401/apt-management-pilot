@@ -10,6 +10,11 @@ class Notice(CommonModel):
 
     title = models.CharField(max_length=200)
     content = models.TextField()
+    house = models.ForeignKey(
+        "houses.Apartment",
+        on_delete=models.CASCADE,
+        related_name="notices",
+    )
 
     def __str__(self):
         return self.title

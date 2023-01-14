@@ -17,6 +17,11 @@ class Complaint(CommonModel):
         on_delete=models.CASCADE,
         related_name="complaints",
     )
+    house = models.ForeignKey(
+        "houses.Apartment",
+        on_delete=models.CASCADE,
+        related_name="complaints",
+    )
 
     def __str__(self):
         return self.title

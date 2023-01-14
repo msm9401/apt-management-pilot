@@ -16,6 +16,7 @@ class UserAdmin(UserAdmin):
                     "name",
                     "email",
                     "phone_number",
+                    "my_houses",
                     "apt_number",
                     "house_number",
                 ),

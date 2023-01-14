@@ -12,9 +12,11 @@ class ComplaintAdmin(admin.ModelAdmin):
         "user",
         "created_at",
         "current_status",
+        "house",
     )
 
-    list_filter = (
-        "user",
-        "current_status",
-    )
+    list_filter = ("user", "current_status", "house")
+
+    search_fields = ["house"]
+
+    autocomplete_fields = ["house"]

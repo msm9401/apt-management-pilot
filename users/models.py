@@ -15,15 +15,19 @@ class User(AbstractUser):
 
     name = models.CharField(
         max_length=30,
-        default="관리자",
+        blank=True,
         help_text="이름",
     )
     phone_number = models.CharField(
         validators=[phoneNumberRegex],
         max_length=11,
         unique=True,
-        default="11111111111",
+        blank=True,
+        null=True,
         help_text="전화번호",
     )
-    apt_number = models.PositiveSmallIntegerField(default=1, help_text="아파트 동")
-    house_number = models.PositiveSmallIntegerField(default=1, help_text="아파트 호수")
+    my_houses = models.ManyToManyField(
+        "houses.Apartment", blank=True, related_name="users"
+    )
+    apt_number = models.CharField(max_length=30, blank=True, help_text="아파트 동")
+    house_number = models.CharField(max_length=30, blank=True, help_text="아파트 호수")

@@ -5,14 +5,30 @@ from .models import Apartment
 @admin.register(Apartment)
 class ApartmentAdmin(admin.ModelAdmin):
 
-    list_display = ("as1", "as2", "as3", "as4", "bjdCode", "kaptCode", "kaptName")
+    list_display = (
+        "address_do",
+        "address_si",
+        "address_dong",
+        "address_li",
+        "bjd_code",
+        "kapt_code",
+        "kapt_name",
+    )
 
-    list_filter = ("as1", "as2", "as3", "as4")
+    list_filter = ("address_do", "address_si", "address_dong", "address_li")
 
     list_max_show_all = 5
 
     list_per_page = 50
 
-    search_fields = ["as1", "as2", "as3", "as4", "bjdCode", "kaptCode", "kaptName"]
+    search_fields = [
+        "address_do",
+        "address_si",
+        "address_dong",
+        "address_li",
+        "bjd_code",
+        "kapt_code",
+        "kapt_name",
+    ]
 
     search_help_text = "주소, 아파트명, 단지코드, 법정동코드 검색"

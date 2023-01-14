@@ -14,6 +14,11 @@ class Question(CommonModel):
     description = models.TextField(null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
     status = models.BooleanField(default=True)
+    house = models.ForeignKey(
+        "houses.Apartment",
+        on_delete=models.CASCADE,
+        related_name="polls",
+    )
 
     def __str__(self):
         return self.title

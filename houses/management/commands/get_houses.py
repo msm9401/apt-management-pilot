@@ -25,21 +25,21 @@ class Command(BaseCommand):
         for a in apt_data:
             try:
                 Apartment(
-                    as1=a["as1"],
-                    as2=a["as2"],
-                    as3=a["as3"],
-                    as4=a["as4"],
-                    bjdCode=a["bjdCode"],
-                    kaptCode=a["kaptCode"],
-                    kaptName=a["kaptName"],
+                    address_do=a["as1"],
+                    address_si=a["as2"],
+                    address_dong=a["as3"],
+                    address_li=a["as4"],
+                    bjd_code=a["bjdCode"],
+                    kapt_code=a["kaptCode"],
+                    kapt_name=a["kaptName"],
                 ).save()
             except KeyError:
                 Apartment(
-                    as1=a["as1"],
-                    as2=a["as2"],
-                    as3=a["as3"],
-                    bjdCode=a["bjdCode"],
-                    kaptCode=a["kaptCode"],
-                    kaptName=a["kaptName"],
+                    address_do=a["as1"],
+                    address_si=a["as2"],
+                    address_dong=a["as3"],
+                    bjd_code=a["bjdCode"],
+                    kapt_code=a["kaptCode"],
+                    kapt_name=a["kaptName"],
                 ).save()
         self.stdout.write(self.style.SUCCESS("Houses Saved!"))
