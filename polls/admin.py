@@ -18,6 +18,8 @@ class QuestionAdmin(admin.ModelAdmin):
 
     search_fields = ["house"]
 
+    search_help_text = "주소, 아파트명, 단지코드, 법정동코드 검색"
+
     autocomplete_fields = ["house"]
 
 

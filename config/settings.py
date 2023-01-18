@@ -53,6 +53,9 @@ CUSTOM_APPS = [
     "schedule.apps.ScheduleConfig",
     "polls.apps.PollsConfig",
     "houses.apps.HousesConfig",
+    "feeds.apps.FeedsConfig",
+    "comments.apps.CommentsConfig",
+    "medias.apps.MediasConfig",
 ]
 
 INSTALLED_APPS = SYSTEM_APPS + CUSTOM_APPS
