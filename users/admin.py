@@ -19,6 +19,7 @@ class UserAdmin(UserAdmin):
                     "my_houses",
                     "apt_number",
                     "house_number",
+                    "profile_photo",
                 ),
                 "classes": ("wide",),
             },

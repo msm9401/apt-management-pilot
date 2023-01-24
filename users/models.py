@@ -18,6 +18,7 @@ class User(AbstractUser):
         blank=True,
         help_text="이름",
     )
+    profile_photo = models.URLField(blank=True)
     phone_number = models.CharField(
         validators=[phoneNumberRegex],
         max_length=11,
