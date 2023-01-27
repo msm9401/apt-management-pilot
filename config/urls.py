@@ -21,4 +21,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/houses/", include("houses.urls")),
     path("api/v1/houses/<str:kapt_name>/feed/", include("feeds.urls")),
+    path(
+        "api/v1/houses/<str:kapt_name>/feed/<int:pk>/comment/", include("comments.urls")
+    ),
 ]

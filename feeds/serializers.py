@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from medias.serializers import PhotoSerializer
+from users.serializers import TinyUserSerializer
 from .models import Feed
 from comments.models import Comment
 
@@ -9,6 +10,7 @@ class FeedListSerializer(serializers.ModelSerializer):
 
     photos = PhotoSerializer(many=True, read_only=True)
     comments_count = serializers.SerializerMethodField()
+    user = TinyUserSerializer(read_only=True)
 
     class Meta:
         model = Feed
@@ -21,11 +23,12 @@ class FeedListSerializer(serializers.ModelSerializer):
 class FeedDetailSerializer(serializers.ModelSerializer):
 
     photos = PhotoSerializer(many=True, read_only=True)
+    user = TinyUserSerializer(read_only=True)
     excluded_recomments = serializers.SerializerMethodField()
 
     class Meta:
         model = Feed
-        fields = "__all__"
+        exclude = ["house"]
 
     def get_excluded_recomments(self, feed):
 
@@ -36,4 +39,14 @@ class FeedDetailSerializer(serializers.ModelSerializer):
         queryset = Comment.objects.filter(feed_id=feed.pk) & Comment.objects.filter(
             parent_comment=None
         )
-        return list(queryset.values())
+
+        return list(
+            queryset.values(
+                "id",
+                "created_at",
+                "updated_at",
+                "content",
+                "user__username",
+                "user__profile_photo",
+            )
+        )
