@@ -24,4 +24,5 @@ urlpatterns = [
     path(
         "api/v1/houses/<str:kapt_name>/feed/<int:pk>/comment/", include("comments.urls")
     ),
+    path("api/v1/houses/<str:kapt_name>/notice/", include("notices.urls")),
 ]
