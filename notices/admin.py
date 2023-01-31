@@ -9,6 +9,8 @@ class NoticeAdmin(admin.ModelAdmin):
 
     list_filter = ("house__address_do",)
 
-    search_fields = ["house"]
+    search_fields = ["house__kapt_name"]
+
+    search_help_text = "아파트명 검색"
 
     autocomplete_fields = ["house"]
