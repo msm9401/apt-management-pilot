@@ -17,6 +17,8 @@ class ComplaintAdmin(admin.ModelAdmin):
 
     list_filter = ("user", "current_status", "house")
 
-    search_fields = ["house"]
+    search_fields = ["house__kapt_name"]
+
+    search_help_text = "아파트명 검색"
 
     autocomplete_fields = ["house"]
