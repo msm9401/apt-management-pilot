@@ -48,4 +48,4 @@ class UserAdmin(UserAdmin):
 
     list_display = ("username", "name", "phone_number", "apt_number", "house_number")
 
-    raw_id_fields = ["my_houses"]
+    autocomplete_fields = ["my_houses"]

@@ -26,4 +26,5 @@ urlpatterns = [
     ),
     path("api/v1/houses/<str:kapt_name>/notice/", include("notices.urls")),
     path("api/v1/houses/<str:kapt_name>/contact/", include("contacts.urls")),
+    path("api/v1/houses/<str:kapt_name>/schedule/", include("schedule.urls")),
 ]
