@@ -20,6 +20,7 @@ from django.urls import path, include
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/houses/", include("houses.urls")),
+    path("api/v1/users/", include("users.urls")),
     path("api/v1/houses/<str:kapt_name>/feed/", include("feeds.urls")),
     path(
         "api/v1/houses/<str:kapt_name>/feed/<int:pk>/comment/", include("comments.urls")
@@ -28,4 +29,5 @@ urlpatterns = [
     path("api/v1/houses/<str:kapt_name>/contact/", include("contacts.urls")),
     path("api/v1/houses/<str:kapt_name>/schedule/", include("schedule.urls")),
     path("api/v1/houses/<str:kapt_name>/complaint/", include("complaints.urls")),
+    path("api/v1/houses/<str:kapt_name>/profile/", include("users.urls")),
 ]
