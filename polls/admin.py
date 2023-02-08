@@ -2,6 +2,11 @@ from django.contrib import admin
 from .models import Question, Choice
 
 
+class ChoiceAdminInline(admin.TabularInline):
+    model = Choice
+    extra = 3
+
+
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
 
@@ -22,12 +27,14 @@ class QuestionAdmin(admin.ModelAdmin):
 
     autocomplete_fields = ["house"]
 
+    inlines = [ChoiceAdminInline]
 
-@admin.register(Choice)
+
+""" @admin.register(Choice)
 class ChoiceAdmin(admin.ModelAdmin):
 
     list_display = ("question", "title", "votes")
 
     list_filter = ("question",)
 
-    ordering = ["-votes"]
+    ordering = ["-votes"] """
