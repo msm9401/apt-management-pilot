@@ -117,3 +117,6 @@ class LogIn(KnoxLoginView):
                 "token": AuthToken.objects.create(user)[1],
             }
         )
+
+
+# 인증부분은 프론트할때 마무리하자.(토큰발급후 토큰으로 myprofile 확인함.)

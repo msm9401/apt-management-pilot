@@ -46,3 +46,5 @@ class NoticeDetail(generics.RetrieveUpdateDestroyAPIView):
             )
             return queryset
         raise PermissionDenied
+
+    # 투표 기능 프론트할때 하자.
