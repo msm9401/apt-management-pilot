@@ -35,8 +35,12 @@ class ScheduleDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAdminUser]
 
     def get_queryset(self):
-        queryset = Schedule.objects.filter(
-            house__kapt_name=self.kwargs["kapt_name"],
-            pk=self.kwargs["pk"],
-        )
-        return queryset
+        if self.request.user.my_houses.filter(
+            kapt_name=self.kwargs["kapt_name"]
+        ).exists():
+            queryset = Schedule.objects.filter(
+                house__kapt_name=self.kwargs["kapt_name"],
+                pk=self.kwargs["pk"],
+            )
+            return queryset
+        raise PermissionDenied

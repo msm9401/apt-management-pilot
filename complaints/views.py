@@ -47,8 +47,12 @@ class ComplaintDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAdminUserOrAuthenticatedReadOnly]
 
     def get_queryset(self):
-        queryset = Complaint.objects.filter(
-            house__kapt_name=self.kwargs["kapt_name"],
-            pk=self.kwargs["pk"],
-        )
-        return queryset
+        if self.request.user.my_houses.filter(
+            kapt_name=self.kwargs["kapt_name"]
+        ).exists():
+            queryset = Complaint.objects.filter(
+                house__kapt_name=self.kwargs["kapt_name"],
+                pk=self.kwargs["pk"],
+            )
+            return queryset
+        raise PermissionDenied

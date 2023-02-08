@@ -1,6 +1,7 @@
 from django.shortcuts import get_list_or_404
 
 from rest_framework import generics
+from rest_framework.exceptions import PermissionDenied
 
 from .serializers import NoticeDetailSerializer, NoticeListSerializer
 from .models import Notice
@@ -13,8 +14,12 @@ class NoticeListCreate(generics.ListCreateAPIView):
     permission_classes = [IsAdminUserOrAuthenticatedReadOnly]
 
     def get_queryset(self):
-        queryset = Notice.objects.filter(house__kapt_name=self.kwargs["kapt_name"])
-        return get_list_or_404(queryset)
+        if self.request.user.my_houses.filter(
+            kapt_name=self.kwargs["kapt_name"]
+        ).exists():
+            queryset = Notice.objects.filter(house__kapt_name=self.kwargs["kapt_name"])
+            return get_list_or_404(queryset)
+        raise PermissionDenied
 
     def perform_create(self, serializer):
         serializer.save(house=Apartment.objects.get(kapt_name=self.kwargs["kapt_name"]))
@@ -32,8 +37,12 @@ class NoticeDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAdminUserOrAuthenticatedReadOnly]
 
     def get_queryset(self):
-        queryset = Notice.objects.filter(
-            house__kapt_name=self.kwargs["kapt_name"],
-            pk=self.kwargs["pk"],
-        )
-        return queryset
+        if self.request.user.my_houses.filter(
+            kapt_name=self.kwargs["kapt_name"]
+        ).exists():
+            queryset = Notice.objects.filter(
+                house__kapt_name=self.kwargs["kapt_name"],
+                pk=self.kwargs["pk"],
+            )
+            return queryset
+        raise PermissionDenied

@@ -16,13 +16,15 @@ class FeedList(APIView):
 
     # 피드 리스트
     def get(self, request, kapt_name):
-        try:
-            my_apt_pk = Apartment.objects.get(kapt_name=kapt_name).pk
-            feed_list = Feed.objects.filter(house_id=my_apt_pk)
-        except Apartment.DoesNotExist:
-            raise NotFound
-        serializer = FeedListSerializer(feed_list, many=True)
-        return Response(serializer.data)
+        if request.user.my_houses.filter(kapt_name=self.kwargs["kapt_name"]).exists():
+            try:
+                my_apt_pk = Apartment.objects.get(kapt_name=kapt_name).pk
+                feed_list = Feed.objects.filter(house_id=my_apt_pk)
+            except Apartment.DoesNotExist:
+                raise NotFound
+            serializer = FeedListSerializer(feed_list, many=True)
+            return Response(serializer.data)
+        raise PermissionDenied
 
     # 피드 생성
     def post(self, request, kapt_name):
@@ -41,10 +43,14 @@ class FeedDetail(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self, kapt_name, pk):
-        try:
-            return Feed.objects.get(pk=pk)
-        except Feed.DoesNotExist:
-            raise NotFound
+        if self.request.user.my_houses.filter(
+            kapt_name=self.kwargs["kapt_name"]
+        ).exists():
+            try:
+                return Feed.objects.get(pk=pk)
+            except Feed.DoesNotExist:
+                raise NotFound
+        raise PermissionDenied
 
     # 특정 피드 조회
     def get(self, request, kapt_name, pk):
