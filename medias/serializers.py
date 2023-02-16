@@ -1,9 +1,9 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 
 from .models import Photo, Video
 
 
-class PhotoSerializer(ModelSerializer):
+class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
         fields = [

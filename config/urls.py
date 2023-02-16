@@ -31,4 +31,5 @@ urlpatterns = [
     path("api/v1/houses/<str:kapt_name>/complaint/", include("complaints.urls")),
     path("api/v1/houses/<str:kapt_name>/profile/", include("users.urls")),
     path("api/v1/houses/<str:kapt_name>/poll/", include("polls.urls")),
+    path("__debug__/", include("debug_toolbar.urls")),
 ]

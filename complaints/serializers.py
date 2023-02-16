@@ -1,10 +1,10 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 
 from .models import Complaint
 from users.serializers import TinyUserSerializer
 
 
-class ComplaintListSerializer(ModelSerializer):
+class ComplaintListSerializer(serializers.ModelSerializer):
 
     user = TinyUserSerializer(read_only=True)
 
@@ -19,7 +19,7 @@ class ComplaintListSerializer(ModelSerializer):
         read_only_fields = ["current_status"]
 
 
-class ComplaintCreateSerializer(ModelSerializer):
+class ComplaintCreateSerializer(serializers.ModelSerializer):
 
     user = TinyUserSerializer(read_only=True)
 
@@ -28,7 +28,7 @@ class ComplaintCreateSerializer(ModelSerializer):
         exclude = ["house", "current_status"]
 
 
-class ComplaintDetailSerializer(ModelSerializer):
+class ComplaintDetailSerializer(serializers.ModelSerializer):
 
     user = TinyUserSerializer(read_only=True)
 

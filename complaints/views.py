@@ -24,8 +24,8 @@ class ComplaintListCreate(generics.ListCreateAPIView):
         ).exists():
             queryset = Complaint.objects.filter(
                 house__kapt_name=self.kwargs["kapt_name"]
-            )
-            return get_list_or_404(queryset)
+            ).select_related("user")
+            return queryset
         raise PermissionDenied
 
     def perform_create(self, serializer):
@@ -53,6 +53,6 @@ class ComplaintDetail(generics.RetrieveUpdateDestroyAPIView):
             queryset = Complaint.objects.filter(
                 house__kapt_name=self.kwargs["kapt_name"],
                 pk=self.kwargs["pk"],
-            )
+            ).select_related("user")
             return queryset
         raise PermissionDenied

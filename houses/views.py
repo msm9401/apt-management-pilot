@@ -25,10 +25,10 @@ class ApartmentList(APIView):
         max_apt_id = Apartment.objects.aggregate(max_apt_id=Max("id"))["max_apt_id"]
         min_apt_id = Apartment.objects.aggregate(min_apt_id=Min("id"))["min_apt_id"]
         random_apt_list = []
-        for i in range(1, 11):
+        for i in range(10):
             pk = random.randint(min_apt_id, max_apt_id)
             try:
-                random_apt = Apartment.objects.get(pk=pk)
+                random_apt = Apartment.objects.filter(pk=pk)[0]
                 random_apt_list.append(random_apt)
             except Apartment.DoesNotExist:
                 pass

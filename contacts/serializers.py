@@ -1,9 +1,9 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 
 from .models import ContactNumber
 
 
-class ContactListSerializer(ModelSerializer):
+class ContactListSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactNumber
         fields = [
@@ -13,7 +13,7 @@ class ContactListSerializer(ModelSerializer):
         ]
 
 
-class ContactDetailSerializer(ModelSerializer):
+class ContactDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactNumber
         exclude = ["house"]

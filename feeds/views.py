@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.exceptions import NotFound, ParseError, PermissionDenied
+from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
@@ -18,8 +18,11 @@ class FeedList(APIView):
     def get(self, request, kapt_name):
         if request.user.my_houses.filter(kapt_name=self.kwargs["kapt_name"]).exists():
             try:
-                my_apt_pk = Apartment.objects.get(kapt_name=kapt_name).pk
-                feed_list = Feed.objects.filter(house_id=my_apt_pk)
+                feed_list = (
+                    Feed.objects.select_related("user")
+                    .prefetch_related("comments", "photos")
+                    .filter(house__kapt_name=kapt_name)
+                )
             except Apartment.DoesNotExist:
                 raise NotFound
             serializer = FeedListSerializer(feed_list, many=True)
@@ -47,7 +50,7 @@ class FeedDetail(APIView):
             kapt_name=self.kwargs["kapt_name"]
         ).exists():
             try:
-                return Feed.objects.get(pk=pk)
+                return Feed.objects.get(pk=pk, house__kapt_name=kapt_name)
             except Feed.DoesNotExist:
                 raise NotFound
         raise PermissionDenied
@@ -55,8 +58,6 @@ class FeedDetail(APIView):
     # 특정 피드 조회
     def get(self, request, kapt_name, pk):
         feed = self.get_object(kapt_name, pk)
-        if feed.house.kapt_name != kapt_name:
-            raise ParseError("존재하지 않는 피드입니다.")
         serializer = FeedDetailSerializer(feed)
         return Response(serializer.data)
 

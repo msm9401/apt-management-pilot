@@ -1,9 +1,9 @@
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
+from rest_framework import serializers
 
 from .models import Question, Choice
 
 
-class QuestionListSerializer(ModelSerializer):
+class QuestionListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = [
@@ -14,9 +14,9 @@ class QuestionListSerializer(ModelSerializer):
         ]
 
 
-class QuestionDetailSerializer(ModelSerializer):
+class QuestionDetailSerializer(serializers.ModelSerializer):
 
-    choice_list = SerializerMethodField()
+    choice_list = serializers.SerializerMethodField()
 
     class Meta:
         model = Question

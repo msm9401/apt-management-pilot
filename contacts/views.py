@@ -22,7 +22,7 @@ class ContactListCreate(generics.ListCreateAPIView):
             queryset = ContactNumber.objects.filter(
                 house__kapt_name=self.kwargs["kapt_name"]
             )
-            return get_list_or_404(queryset)
+            return queryset
         raise PermissionDenied
 
     def perform_create(self, serializer):

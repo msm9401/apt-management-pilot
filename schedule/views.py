@@ -16,13 +16,13 @@ class ScheduleListCreate(generics.ListCreateAPIView):
     permission_classes = [IsAdminUserOrAuthenticatedReadOnly]
 
     def get_queryset(self):
-        if self.request.user.my_houses.filter(
-            kapt_name=self.kwargs["kapt_name"]
-        ).exists():  # 유저 본인의 집(아파트)인지 확인
-            queryset = Schedule.objects.filter(
-                house__kapt_name=self.kwargs["kapt_name"]
-            )
-            return get_list_or_404(queryset)
+        my_apt = self.request.user.my_houses.filter(kapt_name=self.kwargs["kapt_name"])
+        if my_apt:
+            # if self.request.user.my_houses.filter(
+            #    kapt_name=self.kwargs["kapt_name"]
+            # ).exists():  # 유저 본인의 집(아파트)인지 확인
+            queryset = Schedule.objects.filter(house=my_apt[0])
+            return queryset
         raise PermissionDenied
 
     def perform_create(self, serializer):
