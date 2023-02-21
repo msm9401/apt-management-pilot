@@ -19,12 +19,9 @@ class ComplaintListCreate(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        if self.request.user.my_houses.filter(
-            kapt_name=self.kwargs["kapt_name"]
-        ).exists():
-            queryset = Complaint.objects.filter(
-                house__kapt_name=self.kwargs["kapt_name"]
-            ).select_related("user")
+        my_apt = self.request.user.my_houses.filter(kapt_name=self.kwargs["kapt_name"])
+        if my_apt:
+            queryset = Complaint.objects.filter(house=my_apt[0]).select_related("user")
             return queryset
         raise PermissionDenied
 

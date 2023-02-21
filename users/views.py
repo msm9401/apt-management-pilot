@@ -57,8 +57,12 @@ class MyProfile(APIView):
 
     def get(self, request, kapt_name):
         user = request.user
-        feeds = Feed.objects.filter(user=user, house__kapt_name=kapt_name)
-        comments = Comment.objects.filter(
+        feeds = (
+            Feed.objects.select_related("user")
+            .prefetch_related("comments", "photos")
+            .filter(user=user, house__kapt_name=kapt_name)
+        )
+        comments = Comment.objects.select_related("user").filter(
             user=user,
             feed__house__kapt_name=kapt_name,
         )

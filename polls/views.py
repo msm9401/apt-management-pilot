@@ -14,12 +14,9 @@ class QuestionListCreate(generics.ListCreateAPIView):
     permission_classes = [IsAdminUserOrAuthenticatedReadOnly]
 
     def get_queryset(self):
-        if self.request.user.my_houses.filter(
-            kapt_name=self.kwargs["kapt_name"]
-        ).exists():
-            queryset = Question.objects.filter(
-                house__kapt_name=self.kwargs["kapt_name"]
-            )
+        my_apt = self.request.user.my_houses.filter(kapt_name=self.kwargs["kapt_name"])
+        if my_apt:
+            queryset = Question.objects.filter(house=my_apt[0])
             return queryset
         raise PermissionDenied
 

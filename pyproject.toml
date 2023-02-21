@@ -17,6 +17,7 @@ djangorestframework = "^3.14.0"
 django-rest-knox = "^4.2.0"
 locust = "^2.14.2"
 django-debug-toolbar = "^3.8.1"
+coverage = "^7.1.0"
 
 
 [build-system]
