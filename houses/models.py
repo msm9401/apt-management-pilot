@@ -14,7 +14,7 @@ class Apartment(CommonModel):
     address_li = models.CharField(max_length=200, blank=True)  # 리
     bjd_code = models.CharField(max_length=200)  # 법정동코드
     kapt_code = models.CharField(max_length=200)  # 단지코드
-    kapt_name = models.CharField(max_length=200)  # 단지명
+    kapt_name = models.CharField(db_index=True, max_length=200)  # 단지명
 
     def __str__(self):
         return (
