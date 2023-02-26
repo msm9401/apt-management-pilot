@@ -1,5 +1,3 @@
-from django.shortcuts import get_list_or_404
-
 from rest_framework import generics
 from rest_framework.exceptions import PermissionDenied
 
@@ -45,5 +43,3 @@ class NoticeDetail(generics.RetrieveUpdateDestroyAPIView):
             )
             return queryset
         raise PermissionDenied
-
-    # 투표 기능 프론트할때 하자.
