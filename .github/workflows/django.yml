@@ -44,7 +44,8 @@ jobs:
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: poetry install --no-interaction --no-root
     - name: Run Tests
+      env:
+          SECRET_KEY: ${{ env.SECRET_KEY }}
       run: |
-        echo "SECRET_KEY=topsecretvalue" >> $GITHUB_ENV
         source .venv/bin/activate
         python manage.py test
