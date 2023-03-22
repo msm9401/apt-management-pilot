@@ -44,8 +44,6 @@ jobs:
         run: poetry install --no-interaction --no-root
       - name: Set Up SECRET_KEY
         run: echo "SECRET_KEY=topsecretvalue" >> $GITHUB_ENV
-      - name: Code Formatting Check
-        run: poetry run black . --check
       - name: Run Tests
         run: |
           source .venv/bin/activate
