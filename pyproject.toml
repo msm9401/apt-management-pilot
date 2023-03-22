@@ -19,6 +19,7 @@ locust = "^2.14.2"
 django-debug-toolbar = "^3.8.1"
 coverage = "^7.1.0"
 django-cors-headers = "^3.14.0"
+black = "^23.1.0"
 
 
 [build-system]
