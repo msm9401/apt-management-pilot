@@ -10,6 +10,11 @@ from .models import Notice
 class NoticeListTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
+
+        """
+        "공지사항 테스트"에 필요한 유저, 아파트, 공지사항 미리 세팅
+        """
+
         cls.user_data = {
             "username": "testuser",
             "password": "password@123",
@@ -50,11 +55,19 @@ class NoticeListTest(APITestCase):
         self.token = data["token"]
 
     def test_get_notice_list(self):
+
+        """
+        본인 아파트 공지사항에만 접근 가능하지 테스트
+        본인 아파트가 아닐때 의도적으로 403오류 나오는지 테스트 그리고
+        본인 아파트 정보를 입력하고 접근가능한지 테스트
+        """
+
         response = self.client.get(
             self.url,
             HTTP_AUTHORIZATION=f"token {self.token}",
         )
-        self.assertEqual(response.status_code, 403)  # 유저의 집이 저장 안되어있을때
+        print("'Forbidden' is the intended message.")
+        self.assertEqual(response.status_code, 403)  # 유저의 집이 저장 안되어있을때(본인 아파트가 아닐때)
 
         self.user.my_houses.add(self.apt)  # 유저의 집 저장
         self.user.save()
@@ -71,6 +84,7 @@ class NoticeListTest(APITestCase):
             self.url,
             HTTP_AUTHORIZATION=f"token {self.token}",
         )
+        print("'Forbidden' is the intended message.")
         self.assertEqual(response.status_code, 403)
 
         self.user.my_houses.add(self.apt)
