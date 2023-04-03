@@ -63,6 +63,7 @@ THIRD_PARTY_APPS = [
     "knox",
     "debug_toolbar",
     "corsheaders",
+    "django_extensions",
 ]
 
 INSTALLED_APPS = SYSTEM_APPS + CUSTOM_APPS + THIRD_PARTY_APPS
