@@ -89,6 +89,9 @@ class MyProfile(APIView):
 
 
 class CreateAccount(APIView):
+
+    """회원 가입"""
+
     def post(self, request):
         serializer = CreateUserSerializer(data=request.data)
         if serializer.is_valid():
@@ -104,6 +107,8 @@ class CreateAccount(APIView):
 
 
 class LogIn(KnoxLoginView):
+
+    """로그인"""
 
     permission_classes = [AllowAny]
 

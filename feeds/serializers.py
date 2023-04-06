@@ -40,7 +40,6 @@ class FeedDetailSerializer(serializers.ModelSerializer):
             parent_comment=None
         )
 
-
         return list(
             queryset.values(
                 "id",
