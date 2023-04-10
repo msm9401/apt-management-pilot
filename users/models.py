@@ -1,14 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.base_user import BaseUserManager
 from django.core.validators import RegexValidator
 
 
-class ComfirmedUserManager(models.Manager):
+class ComfirmedUserManager(BaseUserManager):
     def get_queryset(self):
         return super().get_queryset().filter(is_confirmed=True)
 
 
-class UnconfirmedUserManager(models.Manager):
+class UnconfirmedUserManager(BaseUserManager):
     def get_queryset(self):
         return super().get_queryset().filter(is_confirmed=False)
 
