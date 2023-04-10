@@ -20,6 +20,7 @@ class UserAdmin(UserAdmin):
                     "apt_number",
                     "house_number",
                     "profile_photo",
+                    "is_confirmed",
                 ),
                 "classes": ("wide",),
             },
@@ -46,6 +47,13 @@ class UserAdmin(UserAdmin):
         ),
     )
 
-    list_display = ("username", "name", "phone_number", "apt_number", "house_number")
+    list_display = (
+        "username",
+        "name",
+        "phone_number",
+        "apt_number",
+        "house_number",
+        "is_confirmed",
+    )
 
     autocomplete_fields = ["my_houses"]
