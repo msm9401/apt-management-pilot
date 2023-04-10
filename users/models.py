@@ -1,15 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import UserManager
 from django.core.validators import RegexValidator
 
 
-class ComfirmedUserManager(BaseUserManager):
+class ComfirmedUserManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(is_confirmed=True)
 
 
-class UnconfirmedUserManager(BaseUserManager):
+class UnconfirmedUserManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(is_confirmed=False)
 
@@ -39,7 +39,7 @@ class User(AbstractUser):
     house_number = models.CharField(max_length=30, blank=True, help_text="아파트 호수")
     is_confirmed = models.BooleanField(default=False, help_text="주민 확인 여부")
 
-    objects = models.Manager()
+    objects = UserManager()
     confirmed = ComfirmedUserManager()
     unconfirmed = UnconfirmedUserManager()
 
