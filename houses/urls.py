@@ -5,7 +5,7 @@ from . import views
 
 
 urlpatterns = [
-    path("", views.ApartmentList.as_view()),
+    path("", views.ApartmentList.as_view(), name="home"),
     path("search", views.SearchApartment.as_view()),
     path("<str:kapt_name>/feed/", include("feeds.urls")),
     path("<str:kapt_name>/notice/", include("notices.urls")),

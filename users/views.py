@@ -1,4 +1,5 @@
 from django.contrib.auth import login
+from django.shortcuts import redirect
 
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -111,6 +112,11 @@ class LogIn(KnoxLoginView):
     """로그인"""
 
     permission_classes = [AllowAny]
+
+    # 로그인 되어있으면 로그인url로 접속시 홈화면으로 연결
+    def get(self, request):
+        if request.user.is_authenticated:
+            return redirect("home")
 
     def post(self, request, format=None):
         serializer = AuthTokenSerializer(data=request.data)

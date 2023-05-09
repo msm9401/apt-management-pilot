@@ -54,7 +54,7 @@ class UserTest(APITestCase):
 
     # 내 프로필 수정
     def test_modify_myprofile(self):
-        # url = reverse("my_profile")
+        # url = reverse("my_profile", kapt_name=self. 피드테스트처럼 미리 데이터 세팅하는게 편할듯?)
         url = "/api/v1/users/<str:kapt_name>/profile/myprofile"
         token = self.client.post("/api/v1/users/login", self.data).data["token"]
         response = self.client.put(
