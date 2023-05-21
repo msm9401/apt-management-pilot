@@ -1,11 +1,10 @@
-from django.contrib.auth import login
+from django.contrib.auth import login  # 임시
 from django.shortcuts import redirect
 
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from knox.views import LoginView as KnoxLoginView
 from knox.models import AuthToken
@@ -113,16 +112,11 @@ class LogIn(KnoxLoginView):
 
     permission_classes = [AllowAny]
 
-    # 로그인 되어있으면 로그인url로 접속시 홈화면으로 연결
-    def get(self, request):
-        if request.user.is_authenticated:
-            return redirect("home")
-
     def post(self, request, format=None):
         serializer = AuthTokenSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
-        login(request, user)
+        login(request, user)  # 임시
         serializer = TinyUserSerializer(user)
         return Response(
             {
@@ -130,6 +124,15 @@ class LogIn(KnoxLoginView):
                 "token": AuthToken.objects.create(user)[1],
             }
         )
+
+
+# 임시
+""" class LogOut(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        logout(request)
+        return Response({"ok": "bye!"}) """
 
 
 # 인증부분은 프론트할때 마무리하자.(토큰발급후 토큰으로 myprofile 확인함.)
