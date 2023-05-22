@@ -6,10 +6,9 @@ from users.models import User
 from houses.models import Apartment
 
 
-class FeedListTest(APITestCase):
+class FeedTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-
         """
         "피드 테스트"에 필요한 유저, 아파트, 피드 미리 세팅
         """
@@ -53,7 +52,6 @@ class FeedListTest(APITestCase):
         )
 
     def test_get_feed_list(self):
-
         """
         유저의 아파트랑 url의 아파트이름이 같지않거나 유저가 아파트가 존재하지 않을때 접근금지 테스트
         유저의 아파트가 url의 아파트이름이 같으면 접근가능 테스트
@@ -94,3 +92,67 @@ class FeedListTest(APITestCase):
             HTTP_AUTHORIZATION=f"token {self.token}",
         )
         self.assertEqual(response.status_code, 201)
+
+    def test_get_feed_datial(self):
+        """
+        특정 피드 접근 테스트
+        """
+
+        response = self.client.get(
+            path=self.url + "1/",
+            HTTP_AUTHORIZATION=f"token {self.token}",
+        )
+        self.assertEqual(response.status_code, 403)
+
+        self.user.my_houses.add(self.apt)
+        self.user.save()
+        response = self.client.get(
+            path=self.url + "1/",
+            HTTP_AUTHORIZATION=f"token {self.token}",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(
+            path=self.url + "2/",
+            HTTP_AUTHORIZATION=f"token {self.token}",
+        )
+        self.assertEqual(response.status_code, 404)
+
+    def test_put_feed(self):
+        """피드 수정 테스트"""
+
+        # 유저 아파트 설정(저장)
+        self.user.my_houses.add(self.apt)
+        self.user.save()
+
+        # 아무 정보 없이 수정
+        response = self.client.put(
+            path=self.url + "1/",
+            HTTP_AUTHORIZATION=f"token {self.token}",
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # 피드 내용 수정
+        response = self.client.put(
+            path=self.url + "1/",
+            HTTP_AUTHORIZATION=f"token {self.token}",
+            data={
+                "content": "test2",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["content"], "test2")
+
+    def test_delete_feed(self):
+        """피드 삭제 테스트"""
+
+        # 유저 아파트 설정(저장)
+        self.user.my_houses.add(self.apt)
+        self.user.save()
+
+        # 피드 삭제
+        response = self.client.delete(
+            path=self.url + "1/",
+            HTTP_AUTHORIZATION=f"token {self.token}",
+        )
+        self.assertEqual(response.status_code, 204)
