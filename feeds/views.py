@@ -11,7 +11,6 @@ from houses.models import Apartment
 
 
 class FeedList(APIView):
-
     permission_classes = [IsAuthenticated]
 
     # 피드 리스트
@@ -42,7 +41,6 @@ class FeedList(APIView):
 
 
 class FeedDetail(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get_object(self, kapt_name, pk):

@@ -161,6 +161,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.SessionAuthentication",
         "knox.auth.TokenAuthentication",
     ],
+    "EXCEPTION_HANDLER": "config.exceptions.custom_exception_handler",
 }
 
 

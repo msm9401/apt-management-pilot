@@ -9,7 +9,6 @@ from common.permissions import IsAdminUserOrAuthenticatedReadOnly
 
 
 class ContactListCreate(generics.ListCreateAPIView):
-
     serializer_class = ContactListSerializer
     permission_classes = [IsAdminUserOrAuthenticatedReadOnly]
 
@@ -25,7 +24,6 @@ class ContactListCreate(generics.ListCreateAPIView):
 
 
 class ContactDetail(generics.RetrieveUpdateDestroyAPIView):
-
     serializer_class = ContactDetailSerializer
     permission_classes = [IsAdminUser]
 
