@@ -1,18 +1,13 @@
-FROM python:3.8.2
+FROM python:3.8.13-slim-buster
 
-RUN apt-get update
-RUN python -m pip install --no-cache-dir --upgrade poetry 
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 WORKDIR /usr/src/app
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+COPY requirements.txt /usr/src/app/
 
-COPY pyproject.toml poetry.lock ./ 
-RUN poetry export -f requirements.txt --without-hashes -o /src/requirements.txt 
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY ./requirements/requirements.txt /usr/src/app
-
-#​ Install requirements 
-COPY --from=requirements /src/requirements.txt . 
-RUN pip install --no-cache-dir --user -r requirements.txt
+COPY . /usr/src/app/
