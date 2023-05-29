@@ -1,3 +1,4 @@
+import socket
 from .base import *
 
 DEBUG = True
@@ -14,12 +15,16 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
+hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+INTERNAL_IPS = [ip[:-1] + '1' for ip in ips] + ['127.0.0.1']
+
 # DATABASES = {
 #    "default": {
 #        "ENGINE": "django.db.backends.sqlite3",
 #        "NAME": BASE_DIR / "db.sqlite3",
 #    }
 # }
+
 
 DATABASES = {
     "default": {
