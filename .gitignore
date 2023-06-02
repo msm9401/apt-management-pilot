@@ -122,6 +122,8 @@ celerybeat.pid
 # Environments
 .env
 .env.postgres
+.env.prod
+.env.postgres.prod
 .venv
 env/
 venv/
@@ -168,6 +170,7 @@ cython_debug/
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
+static/
 
 # Local History for Visual Studio Code
 .history/
