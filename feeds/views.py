@@ -19,21 +19,23 @@ class FeedList(APIView):
     # 피드 리스트
     def get(self, request, kapt_name):
         kapt_name = self.kwargs["kapt_name"]
-        request.user.check_my_house(kapt_name=kapt_name)
+        kapt_code = request.user.check_my_house(kapt_name=kapt_name)
         feed_list = get_list_or_404(
             Feed.objects.select_related("user").prefetch_related("comments", "photos"),
-            house__kapt_name=kapt_name,
+            house__kapt_code=kapt_code,
         )
         serializer = FeedListSerializer(feed_list, many=True)
         return Response(serializer.data)
 
     # 피드 생성
     def post(self, request, kapt_name):
+        kapt_name = self.kwargs["kapt_name"]
+        kapt_code = request.user.check_my_house(kapt_name=kapt_name)
         serializer = FeedDetailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(
             user=request.user,
-            house=Apartment.objects.get(kapt_name=kapt_name),
+            house=Apartment.objects.get(kapt_code=kapt_code),
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -43,9 +45,9 @@ class FeedDetail(APIView):
 
     def get_object(self, kapt_name, pk):
         kapt_name = self.kwargs["kapt_name"]
-        self.request.user.check_my_house(kapt_name=kapt_name)
+        kapt_code = self.request.user.check_my_house(kapt_name=kapt_name)
         feed = get_object_or_404(
-            Feed.objects.select_related("user"), house__kapt_name=kapt_name, pk=pk
+            Feed.objects.select_related("user"), house__kapt_code=kapt_code, pk=pk
         )
         return feed
 

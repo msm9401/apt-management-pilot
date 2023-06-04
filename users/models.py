@@ -44,10 +44,12 @@ class User(AbstractUser):
     confirmed = ComfirmedUserManager()
     unconfirmed = UnconfirmedUserManager()
 
-    # 요청하는 유저의 본인 집인지 검증
+    # 요청하는 유저의 본인 집인지 검증(아파트명이 같은 경우가 있으므로 단지코드로 반환)
     def check_my_house(self, **kwargs):
         if not self.my_houses.filter(**kwargs).exists():
             raise PermissionDenied
+        house = self.my_houses.filter(**kwargs)[0]
+        return house.kapt_code
 
     class Meta:
         default_manager_name = "objects"
