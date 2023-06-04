@@ -1,7 +1,10 @@
+from django.shortcuts import get_list_or_404
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import get_object_or_404
 from rest_framework import status
 
 from .serializers import FeedListSerializer, FeedDetailSerializer
@@ -15,43 +18,36 @@ class FeedList(APIView):
 
     # 피드 리스트
     def get(self, request, kapt_name):
-        if request.user.my_houses.filter(kapt_name=self.kwargs["kapt_name"]).exists():
-            try:
-                feed_list = (
-                    Feed.objects.select_related("user")
-                    .prefetch_related("comments", "photos")
-                    .filter(house__kapt_name=kapt_name)
-                )
-            except Apartment.DoesNotExist:
-                raise NotFound
-            serializer = FeedListSerializer(feed_list, many=True)
-            return Response(serializer.data)
-        raise PermissionDenied
+        kapt_name = self.kwargs["kapt_name"]
+        request.user.check_my_house(kapt_name=kapt_name)
+        feed_list = get_list_or_404(
+            Feed.objects.select_related("user").prefetch_related("comments", "photos"),
+            house__kapt_name=kapt_name,
+        )
+        serializer = FeedListSerializer(feed_list, many=True)
+        return Response(serializer.data)
 
     # 피드 생성
     def post(self, request, kapt_name):
         serializer = FeedDetailSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(
-                user=request.user,
-                house=Apartment.objects.get(kapt_name=kapt_name),
-            )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(
+            user=request.user,
+            house=Apartment.objects.get(kapt_name=kapt_name),
+        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class FeedDetail(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self, kapt_name, pk):
-        if self.request.user.my_houses.filter(
-            kapt_name=self.kwargs["kapt_name"]
-        ).exists():
-            try:
-                return Feed.objects.get(pk=pk, house__kapt_name=kapt_name)
-            except Feed.DoesNotExist:
-                raise NotFound
-        raise PermissionDenied
+        kapt_name = self.kwargs["kapt_name"]
+        self.request.user.check_my_house(kapt_name=kapt_name)
+        feed = get_object_or_404(
+            Feed.objects.select_related("user"), house__kapt_name=kapt_name, pk=pk
+        )
+        return feed
 
     # 특정 피드 조회
     def get(self, request, kapt_name, pk):
@@ -65,10 +61,9 @@ class FeedDetail(APIView):
         if feed.user != request.user:
             raise PermissionDenied
         serializer = FeedDetailSerializer(feed, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
     # 피드에 대한 댓글 추가
     def post(self, request, kapt_name, pk):

@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import UserManager
 from django.core.validators import RegexValidator
 
+from rest_framework.exceptions import PermissionDenied
+
 
 class ComfirmedUserManager(models.Manager):
     def get_queryset(self):
@@ -41,6 +43,11 @@ class User(AbstractUser):
     objects = UserManager()
     confirmed = ComfirmedUserManager()
     unconfirmed = UnconfirmedUserManager()
+
+    # 요청하는 유저의 본인 집인지 검증
+    def check_my_house(self, **kwargs):
+        if not self.my_houses.filter(**kwargs).exists():
+            raise PermissionDenied
 
     class Meta:
         default_manager_name = "objects"
