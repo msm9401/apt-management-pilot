@@ -1,6 +1,5 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAdminUser
-from rest_framework.exceptions import PermissionDenied
 
 from .serializers import ScheduleSerializer
 from .models import Schedule
@@ -9,33 +8,30 @@ from common.permissions import IsAdminUserOrAuthenticatedReadOnly
 
 
 class ScheduleListCreate(generics.ListCreateAPIView):
-
     serializer_class = ScheduleSerializer
     permission_classes = [IsAdminUserOrAuthenticatedReadOnly]
 
     def get_queryset(self):
-        my_apt = self.request.user.my_houses.filter(kapt_name=self.kwargs["kapt_name"])
-        if my_apt:
-            queryset = Schedule.objects.filter(house=my_apt[0])
-            return queryset
-        raise PermissionDenied
+        kapt_name = self.kwargs["kapt_name"]
+        kapt_code = self.request.user.check_my_house(kapt_name=kapt_name)
+        queryset = Schedule.objects.filter(house__kapt_code=kapt_code)
+        return queryset
 
     def perform_create(self, serializer):
-        serializer.save(house=Apartment.objects.get(kapt_name=self.kwargs["kapt_name"]))
+        kapt_name = self.kwargs["kapt_name"]
+        kapt_code = self.request.user.check_my_house(kapt_name=kapt_name)
+        serializer.save(house=Apartment.objects.get(kapt_code=kapt_code))
 
 
 class ScheduleDetail(generics.RetrieveUpdateDestroyAPIView):
-
     serializer_class = ScheduleSerializer
     permission_classes = [IsAdminUser]
 
     def get_queryset(self):
-        if self.request.user.my_houses.filter(
-            kapt_name=self.kwargs["kapt_name"]
-        ).exists():
-            queryset = Schedule.objects.filter(
-                house__kapt_name=self.kwargs["kapt_name"],
-                pk=self.kwargs["pk"],
-            )
-            return queryset
-        raise PermissionDenied
+        kapt_name = self.kwargs["kapt_name"]
+        kapt_code = self.request.user.check_my_house(kapt_name=kapt_name)
+        queryset = Schedule.objects.filter(
+            house__kapt_code=kapt_code,
+            pk=self.kwargs["pk"],
+        )
+        return queryset

@@ -38,9 +38,7 @@ class ApartmentList(APIView):
 
 class SearchApartment(APIView):
 
-    """
-    특정 아파트 검색(아파트 이름으로 검색 추천)
-    """
+    """아파트 검색"""
 
     def get(self, request):
         if not request.query_params.get("keyword"):

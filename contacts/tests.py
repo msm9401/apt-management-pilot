@@ -10,7 +10,6 @@ from .models import ContactNumber
 class ContactListTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-
         """
         "연락처 테스트"에 필요한 유저, 아파트, 연락처 미리 세팅
         """
@@ -55,44 +54,48 @@ class ContactListTest(APITestCase):
         self.token = data["token"]
 
     def test_get_contact_list(self):
+        """연락처 불러오기 테스트"""
 
-        """
-        본인 아파트 연락처에만 접근 가능하지 테스트
-        본인 아파트가 아닐때 의도적으로 403오류 나오는지 테스트 그리고
-        본인 아파트 정보를 입력하고 접근가능한지 테스트
-        """
-
+        # 유저 아파트 설정 전 접근
         response = self.client.get(
             self.url,
             HTTP_AUTHORIZATION=f"token {self.token}",
         )
-        print("'Forbidden' is the intended message.")
-        self.assertEqual(response.status_code, 403)  # 유저의 집이 저장 안되어있을때(본인 아파트가 아닐때)
+        self.assertEqual(response.status_code, 403)
 
-        self.user.my_houses.add(self.apt)  # 유저의 집 저장
+        # 유저 아파트 설정
+        self.user.my_houses.add(self.apt)
         self.user.save()
+
+        # 본인 아파트의 contact(연락처)에 성공적으로 접근
         response = self.client.get(
             self.url,
             HTTP_AUTHORIZATION=f"token {self.token}",
         )
-        self.assertEqual(response.status_code, 200)  # 유저의 집 저장 되어있을때
+        self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.data, list)
         self.assertEqual(
             response.data[0]["contact_to"], self.contact_data["contact_to"]
         )
 
     def test_create_contact(self):
+        """연락처 생성 테스트"""
+
+        # 유저 아파트 설정 전 접근
         response = self.client.post(
             self.url,
             HTTP_AUTHORIZATION=f"token {self.token}",
         )
-        print("'Forbidden' is the intended message.")
         self.assertEqual(response.status_code, 403)
 
+        # 유저 아파트 설정
+        # 관리자만 연락처 추가 가능.
         self.user.my_houses.add(self.apt)
         # self.user.is_admin = True
-        self.user.is_staff = True  # 관리자만 연락처 추가 가능.
+        self.user.is_staff = True
         self.user.save()
+
+        # 본인 아파트에 성공적으로 contact(연락처)생성
         response = self.client.post(
             path=self.url,
             data=self.contact_data,

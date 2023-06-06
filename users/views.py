@@ -1,11 +1,10 @@
 from django.contrib.auth import login  # 임시
-from django.shortcuts import redirect
 
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.authtoken.serializers import AuthTokenSerializer
+from rest_framework.generics import get_object_or_404
 from knox.views import LoginView as KnoxLoginView
 from knox.models import AuthToken
 
@@ -30,15 +29,12 @@ class PublicUserProfile(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, kapt_name, username):
-        try:
-            user = User.objects.get(username=username)
-            feeds = Feed.objects.filter(user=user, house__kapt_name=kapt_name)
-            comments = Comment.objects.filter(
-                user=user,
-                feed__house__kapt_name=kapt_name,
-            )
-        except User.DoesNotExist:
-            raise NotFound
+        user = get_object_or_404(User, username=username)
+        feeds = Feed.objects.filter(user=user, house__kapt_name=kapt_name)
+        comments = Comment.objects.filter(
+            user=user,
+            feed__house__kapt_name=kapt_name,
+        )
         serializer = PublicUserProfileSerializer(
             user,
             context={
@@ -82,10 +78,9 @@ class MyProfile(APIView):
             data=request.data,
             partial=True,
         )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 
 class CreateAccount(APIView):
@@ -94,16 +89,15 @@ class CreateAccount(APIView):
 
     def post(self, request):
         serializer = CreateUserSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            serializer = CreateUserSerializer(user)
-            return Response(
-                {
-                    "user": serializer.data,
-                    "token": AuthToken.objects.create(user)[1],
-                }
-            )
-        return Response(serializer.errors)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        serializer = CreateUserSerializer(user)
+        return Response(
+            {
+                "user": serializer.data,
+                "token": AuthToken.objects.create(user)[1],
+            }
+        )
 
 
 class LogIn(KnoxLoginView):

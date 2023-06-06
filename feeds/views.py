@@ -18,7 +18,6 @@ class FeedList(APIView):
 
     # 피드 리스트
     def get(self, request, kapt_name):
-        kapt_name = self.kwargs["kapt_name"]
         kapt_code = request.user.check_my_house(kapt_name=kapt_name)
         feed_list = get_list_or_404(
             Feed.objects.select_related("user").prefetch_related("comments", "photos"),
@@ -29,7 +28,6 @@ class FeedList(APIView):
 
     # 피드 생성
     def post(self, request, kapt_name):
-        kapt_name = self.kwargs["kapt_name"]
         kapt_code = request.user.check_my_house(kapt_name=kapt_name)
         serializer = FeedDetailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -44,7 +42,6 @@ class FeedDetail(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self, kapt_name, pk):
-        kapt_name = self.kwargs["kapt_name"]
         kapt_code = self.request.user.check_my_house(kapt_name=kapt_name)
         feed = get_object_or_404(
             Feed.objects.select_related("user"), house__kapt_code=kapt_code, pk=pk
@@ -68,6 +65,7 @@ class FeedDetail(APIView):
         return Response(serializer.data)
 
     # 피드에 대한 댓글 추가
+    # TODO : comments 앱으로 이동 후 리팩토링
     def post(self, request, kapt_name, pk):
         serializer = CommentDetailSerializer(data=request.data)
         if serializer.is_valid():

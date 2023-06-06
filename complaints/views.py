@@ -1,6 +1,5 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import PermissionDenied
 
 from .models import Complaint
 from .serializers import (
@@ -13,20 +12,19 @@ from common.permissions import IsAdminUserOrAuthenticatedReadOnly
 
 
 class ComplaintListCreate(generics.ListCreateAPIView):
-
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        my_apt = self.request.user.my_houses.filter(kapt_name=self.kwargs["kapt_name"])
-        if my_apt:
-            queryset = Complaint.objects.filter(house=my_apt[0]).select_related("user")
-            return queryset
-        raise PermissionDenied
+        kapt_name = self.kwargs["kapt_name"]
+        kapt_code = self.request.user.check_my_house(kapt_name=kapt_name)
+        queryset = Complaint.objects.filter(house__kapt_code=kapt_code)
+        return queryset
 
     def perform_create(self, serializer):
+        kapt_name = self.kwargs["kapt_name"]
+        kapt_code = self.request.user.check_my_house(kapt_name=kapt_name)
         serializer.save(
-            house=Apartment.objects.get(kapt_name=self.kwargs["kapt_name"]),
-            user=self.request.user,
+            house=Apartment.objects.get(kapt_code=kapt_code), user=self.request.user
         )
 
     def get_serializer_class(self):
@@ -37,17 +35,14 @@ class ComplaintListCreate(generics.ListCreateAPIView):
 
 
 class ComplaintDetail(generics.RetrieveUpdateDestroyAPIView):
-
     serializer_class = ComplaintDetailSerializer
     permission_classes = [IsAdminUserOrAuthenticatedReadOnly]
 
     def get_queryset(self):
-        if self.request.user.my_houses.filter(
-            kapt_name=self.kwargs["kapt_name"]
-        ).exists():
-            queryset = Complaint.objects.filter(
-                house__kapt_name=self.kwargs["kapt_name"],
-                pk=self.kwargs["pk"],
-            ).select_related("user")
-            return queryset
-        raise PermissionDenied
+        kapt_name = self.kwargs["kapt_name"]
+        kapt_code = self.request.user.check_my_house(kapt_name=kapt_name)
+        queryset = Complaint.objects.filter(
+            house__kapt_code=kapt_code,
+            pk=self.kwargs["pk"],
+        )
+        return queryset
