@@ -1,0 +1,27 @@
+FROM python:3.8.13-slim-buster as requirements
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends build-essential \
+    && pip install --upgrade pip poetry
+
+COPY pyproject.toml poetry.lock ./
+RUN poetry export -f requirements.txt --without-hashes -o requirements.txt --without dev
+
+FROM python:3.8.13-slim-buster
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+RUN groupadd -r appuser && useradd --no-log-init -r -g appuser appuser
+
+WORKDIR /home/appuser
+
+COPY --from=requirements requirements.txt /home/appuser/
+RUN pip install --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
+
+COPY . /home/appuser/
+
+RUN chown -R appuser:appuser /home/appuser
+
+USER appuser

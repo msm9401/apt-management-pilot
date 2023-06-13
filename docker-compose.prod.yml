@@ -4,18 +4,20 @@ services:
   nginx:
     build: ./nginx
     volumes:
-      - static_volume:/usr/src/app/static
+      - static_volume:/home/appuser/static
     ports:
       - 80:80
     depends_on:
       - web
 
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
     command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - ./:/usr/src/app/
-      - static_volume:/usr/src/app/static
+      - ./:/home/appuser/
+      - static_volume:/home/appuser/static
     expose:
       - 8000
     ports:
