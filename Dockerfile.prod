@@ -20,6 +20,9 @@ COPY --from=requirements requirements.txt /home/appuser/
 RUN pip install --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
+COPY settings.sh /home/appuser/
+RUN chmod +x /home/appuser/settings.sh
+
 COPY . /home/appuser/
 
 RUN chown -R appuser:appuser /home/appuser
