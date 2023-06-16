@@ -18,12 +18,17 @@ class ApartmentList(APIView):
     """
 
     def get(self, request):
+        # 로그인 했을때
         if not request.user.is_anonymous:
             my_houses = request.user.my_houses
             serializer = ApartmentSerializer(my_houses, many=True)
             return Response(serializer.data)
+
+        # 로그인 안했을때
         max_apt_id = Apartment.objects.aggregate(max_apt_id=Max("id"))["max_apt_id"]
         min_apt_id = Apartment.objects.aggregate(min_apt_id=Min("id"))["min_apt_id"]
+        if max_apt_id or min_apt_id is None:
+            raise ParseError("아파트 정보를 불러올 수 없습니다.")
         random_apt_list = []
         for i in range(10):
             pk = random.randint(min_apt_id, max_apt_id)

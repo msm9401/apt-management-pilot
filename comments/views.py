@@ -9,7 +9,6 @@ from .serializers import CommentDetailSerializer
 
 
 class FeedComment(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get_object(self, kapt_name, pk):
