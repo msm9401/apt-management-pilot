@@ -1,13 +1,14 @@
+from django.db.models import Count
+
 from rest_framework import serializers
 
 from medias.serializers import PhotoSerializer
 from users.serializers import TinyUserSerializer
-from .models import Feed
 from comments.models import Comment
+from .models import Feed
 
 
 class FeedListSerializer(serializers.ModelSerializer):
-
     photos = PhotoSerializer(many=True, read_only=True)
     comments_count = serializers.SerializerMethodField()
     user = TinyUserSerializer(read_only=True)
@@ -21,25 +22,17 @@ class FeedListSerializer(serializers.ModelSerializer):
 
 
 class FeedDetailSerializer(serializers.ModelSerializer):
-
     photos = PhotoSerializer(many=True, read_only=True)
     user = TinyUserSerializer(read_only=True)
-    excluded_recomments = serializers.SerializerMethodField()
+    only_comments = serializers.SerializerMethodField()
 
     class Meta:
         model = Feed
         exclude = ["house"]
 
-    def get_excluded_recomments(self, feed):
-
-        """
-        대댓글을 제외한 피드의 댓글만 가져오는 함수
-        """
-
-        queryset = Comment.objects.filter(feed_id=feed.pk) & Comment.objects.filter(
-            parent_comment=None
-        )
-
+    # 대댓글을 제외한 피드의 댓글만 가져오는 함수(대댓글은 개수만 표시)
+    def get_only_comments(self, feed):
+        queryset = Comment.objects.filter(feed_id=feed.pk, parent_comment=None)
         return list(
             queryset.values(
                 "id",
@@ -48,5 +41,5 @@ class FeedDetailSerializer(serializers.ModelSerializer):
                 "content",
                 "user__username",
                 "user__profile_photo",
-            )
+            ).annotate(recomment_count=Count("comments"))
         )

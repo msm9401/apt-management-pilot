@@ -5,8 +5,7 @@ from users.serializers import TinyUserSerializer
 
 
 class CommentDetailSerializer(serializers.ModelSerializer):
-
-    recomment = serializers.SerializerMethodField()
+    recomments = serializers.SerializerMethodField()
     user = TinyUserSerializer(read_only=True)
 
     class Meta:
@@ -14,12 +13,12 @@ class CommentDetailSerializer(serializers.ModelSerializer):
         fields = [
             "content",
             "user",
-            "recomment",
+            "recomments",
             "created_at",
             "updated_at",
         ]
 
-    def get_recomment(self, comment):
+    def get_recomments(self, comment):
         queryset = Comment.objects.filter(parent_comment=comment.id)
         return list(
             queryset.values(

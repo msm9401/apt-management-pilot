@@ -6,9 +6,7 @@ from common.models import CommonModel
 
 class Comment(CommonModel):
 
-    """
-    댓글, 대댓글
-    """
+    """댓글, 대댓글"""
 
     content = models.CharField(max_length=500)
     user = models.ForeignKey(

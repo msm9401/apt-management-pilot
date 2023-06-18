@@ -65,16 +65,14 @@ class FeedDetail(APIView):
         return Response(serializer.data)
 
     # 피드에 대한 댓글 추가
-    # TODO : comments 앱으로 이동 후 리팩토링
     def post(self, request, kapt_name, pk):
         serializer = CommentDetailSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(
-                user=request.user,
-                feed=self.get_object(kapt_name, pk),
-            )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(
+            user=request.user,
+            feed=self.get_object(kapt_name, pk),
+        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     # 피드 삭제
     def delete(self, request, kapt_name, pk):

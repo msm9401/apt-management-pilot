@@ -1,7 +1,8 @@
 from rest_framework.views import APIView
-from rest_framework.exceptions import NotFound, ParseError, PermissionDenied
+from rest_framework.exceptions import PermissionDenied, MethodNotAllowed
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import get_object_or_404
 from rest_framework import status
 
 from .models import Comment
@@ -12,31 +13,35 @@ class FeedComment(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self, kapt_name, pk):
-        try:
-            return Comment.objects.get(pk=pk)
-        except Comment.DoesNotExist:
-            raise NotFound
+        comment = get_object_or_404(
+            Comment.objects.select_related("user"),
+            feed__house__kapt_name=kapt_name,
+            pk=pk,
+        )
+        return comment
 
     # 특정 댓글 조회
     def get(self, request, kapt_name, pk):
         comment = self.get_object(kapt_name, pk)
-        if comment.feed.house.kapt_name != kapt_name:
-            raise ParseError("이 피드에 존재하지 않는 댓글입니다.")
         serializer = CommentDetailSerializer(comment)
         return Response(serializer.data)
 
     # 댓글에 대한 대댓글 추가
     def post(self, request, kapt_name, pk):
         comment = self.get_object(kapt_name, pk)
+
+        # 대댓글에는 댓글을 허용하지 않음
+        if comment.parent_comment:
+            raise MethodNotAllowed(request.method)
+
         serializer = CommentDetailSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(
-                user=request.user,
-                feed=comment.feed,
-                parent_comment=comment,
-            )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(
+            user=request.user,
+            feed=comment.feed,
+            parent_comment=comment,
+        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     # 댓글 수정
     def put(self, request, kapt_name, pk):
@@ -44,10 +49,9 @@ class FeedComment(APIView):
         if comment.user != request.user:
             raise PermissionDenied
         serializer = CommentDetailSerializer(comment, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
     # 댓글 삭제
     def delete(self, request, kapt_name, pk):
