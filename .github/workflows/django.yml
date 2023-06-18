@@ -49,7 +49,7 @@ jobs:
 
       - name: Run Tests
         run: |
-          source .venv/bin/activate
+          source $VENV
           coverage run manage.py test
           coverage report
           coverage xml
