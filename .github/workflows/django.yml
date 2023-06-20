@@ -51,12 +51,6 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root
 
-      #----------------------------------------------
-      # install root project, if required
-      #----------------------------------------------
-      - name: Install project
-        run: poetry install --no-interaction
-
       - name: Set Up SECRET_KEY
         run: echo "SECRET_KEY=topsecretvalue" >> $GITHUB_ENV
 

@@ -27,16 +27,13 @@ class ApartmentList(APIView):
         # 로그인 안했을때
         max_apt_id = Apartment.objects.aggregate(max_apt_id=Max("id"))["max_apt_id"]
         min_apt_id = Apartment.objects.aggregate(min_apt_id=Min("id"))["min_apt_id"]
-        if max_apt_id or min_apt_id is None:
+        if not max_apt_id:
             raise ParseError("아파트 정보를 불러올 수 없습니다.")
-        random_apt_list = []
-        for i in range(10):
+        random_apt_pk_list = []
+        for _ in range(10):
             pk = random.randint(min_apt_id, max_apt_id)
-            try:
-                random_apt = Apartment.objects.filter(pk=pk)[0]
-                random_apt_list.append(random_apt)
-            except Apartment.DoesNotExist:
-                pass
+            random_apt_pk_list.append(pk)
+        random_apt_list = Apartment.objects.filter(id__in=random_apt_pk_list)
         serializer = ApartmentSerializer(random_apt_list, many=True)
         return Response(serializer.data)
 
