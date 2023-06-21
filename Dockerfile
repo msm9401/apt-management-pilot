@@ -18,4 +18,8 @@ COPY --from=requirements requirements-dev.txt /usr/src/app/
 RUN pip install --upgrade pip \
     && pip install --no-cache-dir -r requirements-dev.txt
 
+COPY entrypoint.sh /usr/src/app/
+
 COPY . /usr/src/app/
+
+ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
