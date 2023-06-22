@@ -120,16 +120,25 @@ class FeedTest(APITestCase):
         self.user.my_houses.add(self.apt)
         self.user.save()
 
+        # 본인 아파트에 성공적으로 feed생성
+        response = self.client.post(
+            path=self.url,
+            data=self.feed_data,
+            HTTP_AUTHORIZATION=f"token {self.token}",
+        )
+        self.assertEqual(response.status_code, 201)
+
         # 본인 아파트의 특정feed에 성공적으로 접근
+        pk = response.data["id"]
         response = self.client.get(
-            path=self.url + "1/",
+            path=self.url + str(pk) + "/",
             HTTP_AUTHORIZATION=f"token {self.token}",
         )
         self.assertEqual(response.status_code, 200)
 
         # 본인 아파트의 존재하지 않은 feed에 접근
         response = self.client.get(
-            path=self.url + "2/",
+            path=self.url + str(pk + 1) + "/",
             HTTP_AUTHORIZATION=f"token {self.token}",
         )
         self.assertEqual(response.status_code, 404)
@@ -141,16 +150,25 @@ class FeedTest(APITestCase):
         self.user.my_houses.add(self.apt)
         self.user.save()
 
+        # 본인 아파트에 성공적으로 feed생성
+        response = self.client.post(
+            path=self.url,
+            data=self.feed_data,
+            HTTP_AUTHORIZATION=f"token {self.token}",
+        )
+        self.assertEqual(response.status_code, 201)
+
         # 아무 정보 없이 수정
+        pk = response.data["id"]
         response = self.client.put(
-            path=self.url + "1/",
+            path=self.url + str(pk) + "/",
             HTTP_AUTHORIZATION=f"token {self.token}",
         )
         self.assertEqual(response.status_code, 200)
 
         # 피드 내용 수정
         response = self.client.put(
-            path=self.url + "1/",
+            path=self.url + str(pk) + "/",
             HTTP_AUTHORIZATION=f"token {self.token}",
             data={
                 "content": "test2",
@@ -166,9 +184,18 @@ class FeedTest(APITestCase):
         self.user.my_houses.add(self.apt)
         self.user.save()
 
+        # 본인 아파트에 성공적으로 feed생성
+        response = self.client.post(
+            path=self.url,
+            data=self.feed_data,
+            HTTP_AUTHORIZATION=f"token {self.token}",
+        )
+        self.assertEqual(response.status_code, 201)
+
         # 피드 삭제
+        pk = response.data["id"]
         response = self.client.delete(
-            path=self.url + "1/",
+            path=self.url + str(pk) + "/",
             HTTP_AUTHORIZATION=f"token {self.token}",
         )
         self.assertEqual(response.status_code, 204)
