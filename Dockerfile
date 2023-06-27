@@ -19,7 +19,8 @@ RUN pip install --upgrade pip \
     && pip install --no-cache-dir -r requirements-dev.txt
 
 COPY entrypoint.sh /usr/src/app/
+RUN chmod +x /usr/src/app/entrypoint.sh
 
 COPY . /usr/src/app/
 
-ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
+ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]
