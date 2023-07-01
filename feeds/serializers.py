@@ -15,7 +15,7 @@ class FeedListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Feed
-        fields = "__all__"
+        exclude = ["house"]
 
     def get_comments_count(self, feed):
         return feed.comments.count()

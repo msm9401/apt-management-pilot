@@ -73,7 +73,6 @@ class FeedTest(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.data, list)
         self.assertEqual(response.data[0]["content"], self.feed.content)
-        self.assertEqual(response.data[0]["house"], self.feed.house.id)
         self.assertEqual(response.data[0]["user"]["username"], self.feed.user.username)
 
     def test_create_feed(self):

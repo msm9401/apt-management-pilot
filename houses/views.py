@@ -5,6 +5,8 @@ from django.db.models import Q
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.generics import get_object_or_404
 
 from .serializers import ApartmentSerializer
 from .models import Apartment
@@ -36,6 +38,26 @@ class ApartmentList(APIView):
         random_apt_list = Apartment.objects.filter(id__in=random_apt_pk_list)
         serializer = ApartmentSerializer(random_apt_list, many=True)
         return Response(serializer.data)
+
+
+class ApartmentDetail(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, kapt_name, pk):
+        apartment = get_object_or_404(Apartment, kapt_name=kapt_name, pk=pk)
+        return apartment
+
+    def get(self, request, kapt_name, pk):
+        apartment = self.get_object(kapt_name, pk)
+        serializer = ApartmentSerializer(apartment)
+        return Response(serializer.data)
+
+    # 임시
+    # TODO : 실제 아파트 주민인지 검증하는 로직 필요
+    def post(self, request, kapt_name, pk):
+        apartment = self.get_object(kapt_name, pk)
+        request.user.my_houses.add(apartment)
+        return Response({"messages": "아파트 정보를 추가했습니다."})
 
 
 class SearchApartment(APIView):
