@@ -27,3 +27,6 @@ class Apartment(CommonModel):
             + "  "
             + self.kapt_name
         )
+
+    class Meta:
+        db_table = "apartment"

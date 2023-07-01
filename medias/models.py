@@ -53,6 +53,9 @@ class Photo(CommonModel):
     def __str__(self):
         return "Photo File"
 
+    class Meta:
+        db_table = "photo"
+
 
 class Video(CommonModel):
 
@@ -95,3 +98,6 @@ class Video(CommonModel):
 
     def __str__(self):
         return "Video File"
+
+    class Meta:
+        db_table = "video"

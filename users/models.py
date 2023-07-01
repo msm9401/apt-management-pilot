@@ -52,4 +52,5 @@ class User(AbstractUser):
         return house.kapt_code
 
     class Meta:
+        db_table = "user"
         default_manager_name = "objects"

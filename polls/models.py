@@ -31,6 +31,9 @@ class Question(CommonModel):
         except:
             return 0
 
+    class Meta:
+        db_table = "question"
+
 
 class Choice(CommonModel):
 
@@ -49,3 +52,6 @@ class Choice(CommonModel):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        db_table = "choice"

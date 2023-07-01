@@ -19,3 +19,6 @@ class ContactNumber(CommonModel):
 
     def __str__(self):
         return self.contact_to
+
+    class Meta:
+        db_table = "contact"
