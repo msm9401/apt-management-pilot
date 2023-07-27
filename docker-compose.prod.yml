@@ -14,7 +14,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
-    command: ./settings.sh
+    command: ./entrypoint.prod.sh
     volumes:
       - ./:/home/appuser/
       - static_volume:/home/appuser/static
@@ -30,7 +30,7 @@ services:
 
   db:
     image: postgres:14.4-alpine
-    command: postgres -c "max_connectios=300"
+    command: postgres -c "max_connections=300"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
