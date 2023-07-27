@@ -10,6 +10,14 @@ python-versions = ">=3.7"
 tests = ["mypy (>=0.800)", "pytest", "pytest-asyncio"]
 
 [[package]]
+name = "async-timeout"
+version = "4.0.2"
+description = "Timeout context manager for asyncio programs"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[[package]]
 name = "backports-zoneinfo"
 version = "0.2.1"
 description = "Backport of the standard library zoneinfo module"
@@ -203,6 +211,21 @@ python-versions = ">=3.4,<4"
 develop = ["coverage[toml] (>=5.0a4)", "furo (>=2021.8.17b43,<2021.9.0)", "pytest (>=4.6.11)", "sphinx (>=3.5.0)", "sphinx-notfound-page"]
 docs = ["furo (>=2021.8.17b43,<2021.9.0)", "sphinx (>=3.5.0)", "sphinx-notfound-page"]
 testing = ["coverage[toml] (>=5.0a4)", "pytest (>=4.6.11)"]
+
+[[package]]
+name = "django-redis"
+version = "5.3.0"
+description = "Full featured redis cache backend for Django."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+Django = ">=3.2"
+redis = ">=3,<4.0.0 || >4.0.0,<4.0.1 || >4.0.1"
+
+[package.extras]
+hiredis = ["redis[hiredis] (>=3,!=4.0.0,!=4.0.1)"]
 
 [[package]]
 name = "django-rest-knox"
@@ -514,6 +537,21 @@ python-versions = ">=3.6"
 cffi = {version = "*", markers = "implementation_name == \"pypy\""}
 
 [[package]]
+name = "redis"
+version = "4.6.0"
+description = "Python client for Redis database and key-value store"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+async-timeout = {version = ">=4.0.2", markers = "python_full_version <= \"3.11.2\""}
+
+[package.extras]
+hiredis = ["hiredis (>=1.0.0)"]
+ocsp = ["cryptography (>=36.0.1)", "pyopenssl (==20.0.1)", "requests (>=2.26.0)"]
+
+[[package]]
 name = "requests"
 version = "2.28.1"
 description = "Python HTTP for Humans."
@@ -673,12 +711,16 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "31ce1fa12231096efe91b3551d122ed6b82c255e21a32a6f669ca736e61ef85b"
+content-hash = "921a6bc5f4deb4c3bcd1adfff9d80012c77b94a5c2a99da28c62f704d318bb8e"
 
 [metadata.files]
 asgiref = [
     {file = "asgiref-3.6.0-py3-none-any.whl", hash = "sha256:71e68008da809b957b7ee4b43dbccff33d1b23519fb8344e33f049897077afac"},
     {file = "asgiref-3.6.0.tar.gz", hash = "sha256:9567dfe7bd8d3c8c892227827c41cce860b368104c3431da67a0c5a65a949506"},
+]
+async-timeout = [
+    {file = "async-timeout-4.0.2.tar.gz", hash = "sha256:2163e1640ddb52b7a8c80d0a67a08587e5d245cc9c553a74a847056bc2976b15"},
+    {file = "async_timeout-4.0.2-py3-none-any.whl", hash = "sha256:8ca1e4fcf50d07413d66d1a5e416e42cfdf5851c981d679a09851a6853383b3c"},
 ]
 backports-zoneinfo = [
     {file = "backports.zoneinfo-0.2.1-cp36-cp36m-macosx_10_14_x86_64.whl", hash = "sha256:da6013fd84a690242c310d77ddb8441a559e9cb3d3d59ebac9aca1a57b2e18bc"},
@@ -1001,6 +1043,10 @@ django-debug-toolbar = [
 django-environ = [
     {file = "django-environ-0.9.0.tar.gz", hash = "sha256:bff5381533056328c9ac02f71790bd5bf1cea81b1beeb648f28b81c9e83e0a21"},
     {file = "django_environ-0.9.0-py2.py3-none-any.whl", hash = "sha256:f21a5ef8cc603da1870bbf9a09b7e5577ab5f6da451b843dbcc721a7bca6b3d9"},
+]
+django-redis = [
+    {file = "django-redis-5.3.0.tar.gz", hash = "sha256:8bc5793ec06b28ea802aad85ec437e7646511d4e571e07ccad19cfed8b9ddd44"},
+    {file = "django_redis-5.3.0-py3-none-any.whl", hash = "sha256:2d8660d39f586c41c9907d5395693c477434141690fd7eca9d32376af00b0aac"},
 ]
 django-rest-knox = [
     {file = "django-rest-knox-4.2.0.tar.gz", hash = "sha256:4595f1dc23d6e41af7939e5f2d8fdaf6ade0a74a656218e7b56683db5566fcc9"},
@@ -1568,6 +1614,10 @@ pyzmq = [
     {file = "pyzmq-25.1.0-pp39-pypy39_pp73-manylinux_2_28_x86_64.whl", hash = "sha256:48e5e59e77c1a83162ab3c163fc01cd2eebc5b34560341a67421b09be0891287"},
     {file = "pyzmq-25.1.0-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:108c96ebbd573d929740d66e4c3d1bdf31d5cde003b8dc7811a3c8c5b0fc173b"},
     {file = "pyzmq-25.1.0.tar.gz", hash = "sha256:80c41023465d36280e801564a69cbfce8ae85ff79b080e1913f6e90481fb8957"},
+]
+redis = [
+    {file = "redis-4.6.0-py3-none-any.whl", hash = "sha256:e2b03db868160ee4591de3cb90d40ebb50a90dd302138775937f6a42b7ed183c"},
+    {file = "redis-4.6.0.tar.gz", hash = "sha256:585dc516b9eb042a619ef0a39c3d7d55fe81bdb4df09a52c9cdde0d07bf1aa7d"},
 ]
 requests = [
     {file = "requests-2.28.1-py3-none-any.whl", hash = "sha256:8fefa2a1a1365bf5520aac41836fbee479da67864514bdb821f31ce07ce65349"},

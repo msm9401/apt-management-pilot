@@ -95,10 +95,20 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
         "knox.auth.TokenAuthentication",
+        # "rest_framework.authentication.SessionAuthentication",
     ],
     "EXCEPTION_HANDLER": "config.exceptions.custom_exception_handler",
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://:apt_management_password@redis:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_reids.client.DefaultClient",
+        },
+    }
 }
 
 LANGUAGE_CODE = "ko-kr"
@@ -106,7 +116,7 @@ TIME_ZONE = "Asia/Seoul"
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

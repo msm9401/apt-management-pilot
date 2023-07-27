@@ -26,15 +26,23 @@ services:
       - ./.env.prod
     depends_on:
       - db
+      - redis
 
   db:
     image: postgres:14.4-alpine
+    command: postgres -c "max_connectios=300"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env.postgres.prod
     ports:
       - "5432:5432"
+
+  redis:
+    image: redis:alpine
+    command: redis-server --requirepass apt_management_password
+    ports:
+      - "6000:6000"
 
 volumes:
   postgres_data:
