@@ -20,6 +20,8 @@ black = "^23.1.0"
 psycopg2-binary = "^2.9.6"
 gunicorn = "^20.1.0"
 django-redis = "^5.3.0"
+boto3 = "^1.28.14"
+django-storages = "^1.13.2"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -42,6 +42,7 @@ THIRD_PARTY_APPS = [
     "rest_framework",
     "knox",
     "corsheaders",
+    "storages",
 ]
 
 INSTALLED_APPS = SYSTEM_APPS + CUSTOM_APPS + THIRD_PARTY_APPS
@@ -110,6 +111,20 @@ CACHES = {
         },
     }
 }
+
+AWS_ACCESS_KEY_ID = "AKIAR53U574K3ZDTLRNE"
+AWS_SECRET_ACCESS_KEY = "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"
+AWS_REGION = "ap-northeast-2"
+
+# S3 Storages
+AWS_STORAGE_BUCKET_NAME = "apt-management-bucket"
+AWS_S3_CUSTOM_DOMAIN = "%s.s3.amazonaws.com" % AWS_STORAGE_BUCKET_NAME
+AWS_S3_OBJECT_PARAMETERS = {
+    "CacheControl": "max-age=86400",
+}
+AWS_DEFAULT_ACL = "public-read"
+STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+STATIC_URL = "https://%s/static/" % AWS_S3_CUSTOM_DOMAIN
 
 LANGUAGE_CODE = "ko-kr"
 TIME_ZONE = "Asia/Seoul"
