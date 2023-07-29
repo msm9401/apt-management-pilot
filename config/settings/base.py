@@ -125,14 +125,12 @@ AWS_S3_OBJECT_PARAMETERS = {
 AWS_DEFAULT_ACL = "public-read"
 STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 STATIC_URL = "https://%s/static/" % AWS_S3_CUSTOM_DOMAIN
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 LANGUAGE_CODE = "ko-kr"
 TIME_ZONE = "Asia/Seoul"
 USE_I18N = True
 USE_TZ = True
-
-STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

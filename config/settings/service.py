@@ -12,3 +12,10 @@ DATABASES = {
         "PORT": os.environ.get("SQL_PORT", "5432"),
     }
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "http://apt-management-bucket.s3-website.ap-northeast-2.amazonaws.com"
+]
+CSRF_TRUSTED_ORIGINS = [
+    "http://apt-management-bucket.s3-website.ap-northeast-2.amazonaws.com"
+]
