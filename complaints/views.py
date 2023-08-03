@@ -37,6 +37,7 @@ class ComplaintListCreate(generics.ListCreateAPIView):
 class ComplaintDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ComplaintDetailSerializer
     permission_classes = [IsAdminUserOrAuthenticatedReadOnly]
+    http_method_names = ["get", "patch", "delete"]
 
     def get_queryset(self):
         kapt_name = self.kwargs["kapt_name"]

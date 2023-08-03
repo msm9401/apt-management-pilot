@@ -26,6 +26,7 @@ class ContactListCreate(generics.ListCreateAPIView):
 class ContactDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ContactDetailSerializer
     permission_classes = [IsAdminUser]
+    http_method_names = ["get", "patch", "delete"]
 
     def get_queryset(self):
         kapt_name = self.kwargs["kapt_name"]

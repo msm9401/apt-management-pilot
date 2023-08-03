@@ -30,6 +30,7 @@ class NoticeListCreate(generics.ListCreateAPIView):
 class NoticeDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = NoticeDetailSerializer
     permission_classes = [IsAdminUserOrAuthenticatedReadOnly]
+    http_method_names = ["get", "patch", "delete"]
 
     def get_queryset(self):
         kapt_name = self.kwargs["kapt_name"]
