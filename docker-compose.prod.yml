@@ -14,7 +14,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
-    command: ./settings.sh
+    command: ./entrypoint.prod.sh
     volumes:
       - ./:/home/appuser/
       - static_volume:/home/appuser/static
