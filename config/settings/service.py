@@ -27,5 +27,7 @@ AWS_DEFAULT_ACL = "public-read"
 STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 STATIC_URL = "https://%s/static/" % AWS_S3_CUSTOM_DOMAIN
 
+DEFAULT_FILE_STORAGE = "config.upload.MediaStorage"
+
 CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS")
 CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS")
