@@ -27,3 +27,4 @@ class Feed(CommonModel):
 
     class Meta:
         db_table = "feed"
+        ordering = ["-created_at"]

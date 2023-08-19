@@ -24,7 +24,7 @@ class User(AbstractUser):
     name = models.CharField(max_length=30, blank=True, help_text="이름(실명)")
     first_name = None
     last_name = None
-    profile_photo = models.URLField(blank=True, help_text="유저 프로필 이미지")
+    profile_photo = models.FileField(blank=True, help_text="유저 프로필 이미지")
     phone_number = models.CharField(
         validators=[phoneNumberRegex],
         max_length=11,

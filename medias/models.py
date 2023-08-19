@@ -10,7 +10,7 @@ class Photo(CommonModel):
     피드, 민원접수, 투표, 공지사항 중 하나에 속하는 사진
     """
 
-    file = models.URLField()
+    file = models.FileField()
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

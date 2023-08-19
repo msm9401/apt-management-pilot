@@ -11,6 +11,7 @@ from .serializers import FeedListSerializer, FeedDetailSerializer
 from comments.serializers import CommentDetailSerializer
 from .models import Feed
 from houses.models import Apartment
+from medias.models import Photo
 
 
 class FeedList(APIView):
@@ -35,6 +36,13 @@ class FeedList(APIView):
             user=request.user,
             house=Apartment.objects.get(kapt_code=kapt_code),
         )
+        if request.FILES:
+            Photo(
+                user=request.user,
+                house=Apartment.objects.get(kapt_code=kapt_code),
+                file=request.FILES["photos[]"],
+                feed=Feed.objects.latest("created_at"),
+            ).save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
