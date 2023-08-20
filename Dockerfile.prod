@@ -15,7 +15,6 @@ ENV PYTHONUNBUFFERED 1
 RUN groupadd -r appuser && useradd --no-log-init -r -g appuser appuser
 
 WORKDIR /home/appuser
-RUN mkdir /home/appuser/static
 
 COPY --from=requirements requirements.txt /home/appuser/
 RUN pip install --upgrade pip \

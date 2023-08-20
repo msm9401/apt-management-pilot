@@ -1,4 +1,5 @@
 from django.shortcuts import get_list_or_404
+from django.core.cache import cache
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -20,11 +21,19 @@ class FeedList(APIView):
     # 피드 리스트
     def get(self, request, kapt_name):
         kapt_code = request.user.check_my_house(kapt_name=kapt_name)
+
+        cached_feed_list = cache.get(f"{kapt_name}:feed_list")
+        if cached_feed_list:
+            return Response(cached_feed_list)
+
         feed_list = get_list_or_404(
             Feed.objects.select_related("user").prefetch_related("comments", "photos"),
             house__kapt_code=kapt_code,
         )
         serializer = FeedListSerializer(feed_list, many=True)
+
+        cache.set(f"{kapt_name}:feed_list", serializer.data, 60 * 5)
+
         return Response(serializer.data)
 
     # 피드 생성
@@ -32,6 +41,9 @@ class FeedList(APIView):
         kapt_code = request.user.check_my_house(kapt_name=kapt_name)
         serializer = FeedDetailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        cache.delete(f"{kapt_name}:feed_list")
+
         serializer.save(
             user=request.user,
             house=Apartment.objects.get(kapt_code=kapt_code),
