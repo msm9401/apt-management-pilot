@@ -31,8 +31,8 @@ class FeedComment(APIView):
         comment = self.get_object(kapt_name, pk)
 
         # 대댓글에는 댓글을 허용하지 않음
-        if comment.parent_comment:
-            raise MethodNotAllowed(request.method)
+        # if comment.parent_comment:
+        #    raise MethodNotAllowed(request.method)
 
         serializer = CommentDetailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

@@ -71,9 +71,11 @@ class FeedTest(APITestCase):
             HTTP_AUTHORIZATION=f"token {self.token}",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIsInstance(response.data, list)
-        self.assertEqual(response.data[0]["content"], self.feed.content)
-        self.assertEqual(response.data[0]["user"]["username"], self.feed.user.username)
+        self.assertIsInstance(response.data, dict)
+        self.assertEqual(response.data["results"][0]["content"], self.feed.content)
+        self.assertEqual(
+            response.data["results"][0]["user"]["username"], self.feed.user.username
+        )
 
     def test_create_feed(self):
         """피드 생성 테스트"""
