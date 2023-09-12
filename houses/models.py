@@ -30,3 +30,8 @@ class Apartment(CommonModel):
 
     class Meta:
         db_table = "apartment"
+
+        # 위에 보면 kapt_name에도 index 적용 되어 있다.
+        indexes = [
+            models.Index(fields=["kapt_code"]),
+        ]
