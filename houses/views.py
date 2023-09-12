@@ -2,6 +2,8 @@ import random
 
 from django.db.models import Max, Min
 from django.db.models import Q
+from django.core.cache import cache
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
@@ -22,21 +24,38 @@ class ApartmentList(APIView):
     def get(self, request):
         # 로그인 했을때
         if not request.user.is_anonymous:
+            # cached_house = cache.get(f"{request.user}:house_list")
+            # if cached_house:
+            #     return Response(cached_house)
+
             my_houses = request.user.my_houses
             serializer = ApartmentSerializer(my_houses, many=True)
+
+            # cache.set(f"{request.user}:house_list", serializer.data, 60)
+
             return Response(serializer.data)
 
         # 로그인 안했을때
+        # cached_random_house = cache.get("random_house_list")
+        # if cached_random_house:
+        #     return Response(cached_random_house)
+
         max_apt_id = Apartment.objects.aggregate(max_apt_id=Max("id"))["max_apt_id"]
         min_apt_id = Apartment.objects.aggregate(min_apt_id=Min("id"))["min_apt_id"]
+
         if not max_apt_id:
             raise ParseError("아파트 정보를 불러올 수 없습니다.")
+
         random_apt_pk_list = []
         for _ in range(10):
             pk = random.randint(min_apt_id, max_apt_id)
             random_apt_pk_list.append(pk)
+
         random_apt_list = Apartment.objects.filter(id__in=random_apt_pk_list)
         serializer = ApartmentSerializer(random_apt_list, many=True)
+
+        # cache.set("random_house_list", serializer.data, 60 * 60)
+
         return Response(serializer.data)
 
 
@@ -57,6 +76,7 @@ class ApartmentDetail(APIView):
     def post(self, request, kapt_name, pk):
         apartment = self.get_object(kapt_name, pk)
         request.user.my_houses.add(apartment)
+        # cache.delete(f"{request.user}:house_list")
         return Response({"messages": "아파트 정보를 추가했습니다."})
 
 
