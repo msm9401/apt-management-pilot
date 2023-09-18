@@ -6,10 +6,20 @@
 아파트 관리와 커뮤니티 기능을 제공하는 프로젝트
 
 ![erd](https://user-images.githubusercontent.com/70134073/229479827-e8fed654-9b76-408b-a4ec-a26432724ea3.png)
+❗️ 개발과정 중 변경될 수도 있습니다. (변경사항이 있다면 개발 완료 후 최종본 업데이트 예정)<br>
 
 선배포 링크 : http://apt-management-bucket.s3-website.ap-northeast-2.amazonaws.com<br>
 ❗️ 기능 확인 목적의 데모 사이트<br>
-❗️ 업데이트 버전 계속 배포 예정<br>
+❗️ 업데이트 버전 계속 배포 예정<br><br>
+❗️ 아래와 같은 화면을 확인하시려면 회원가입 후 검색 창에 "용인신갈푸르지오" 를 검색 후 초록색 하트를 눌러 본인 아파트로 등록 후(현재는 별도 인증 과정 없음) 확인해 주세요. 회원 가입 후 본인 아파트 등록을 하지 않고 접속 시 임시로 "Page Not Found"가 뜹니다.<br>
+
+<center><img src="https://github.com/msm9401/apt-management-pilot/assets/70134073/dcc68445-cf9f-4ebe-9137-cb170386878e" width="400" height="250"/></center>
+
+<center><img src="https://github.com/msm9401/apt-management-pilot/assets/70134073/b0d2426f-fe8f-4be5-b5a4-226f8b66491c" width="400" height="250"/></center>
+
+<center><img src="https://github.com/msm9401/apt-management-pilot/assets/70134073/e2cde4a3-5d03-4067-9373-676216a2902f" width="400" height="250"/></center>
+
+<center><img src="https://github.com/msm9401/apt-management-pilot/assets/70134073/8e7189b2-cb99-4e1a-acdd-45ef7397a73a" width="400" height="250"/></center>
 
 ### 프로젝트 개요
 
