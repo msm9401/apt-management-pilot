@@ -1,4 +1,7 @@
-from django.db.models import Q
+from datetime import timedelta
+
+from django.db.models import Q, F
+from django.db.models.functions import TruncDate
 
 from rest_framework import serializers
 
@@ -16,8 +19,8 @@ class CommentDetailSerializer(serializers.ModelSerializer):
             "content",
             "user",
             "recomments",
-            "created_at",
-            "updated_at",
+            "created_at_string",
+            "updated_at_string",
         ]
 
     def get_recomments(self, comment):
@@ -35,7 +38,12 @@ class CommentDetailSerializer(serializers.ModelSerializer):
                 "user__username",
                 "user__profile_photo",
                 "content",
-                "created_at",
-                "updated_at",
+                # "created_at",
+                # "updated_at",
+            ).annotate(
+                # created_at_string=F("created_at") + timedelta(hours=9),
+                # updated_at_string=F("updated_at") + timedelta(hours=9),
+                created_at_string=TruncDate(F("created_at")),
+                updated_at_string=TruncDate(F("updated_at")),
             )
         )
