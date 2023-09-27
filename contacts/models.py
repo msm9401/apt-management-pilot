@@ -22,3 +22,4 @@ class ContactNumber(CommonModel):
 
     class Meta:
         db_table = "contact"
+        ordering = ["id"]

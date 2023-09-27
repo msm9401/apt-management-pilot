@@ -73,8 +73,10 @@ class NoticeListTest(APITestCase):
             HTTP_AUTHORIZATION=f"token {self.token}",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIsInstance(response.data, list)
-        self.assertEqual(response.data[0]["title"], self.notice_data["title"])
+        self.assertIsInstance(response.data["results"], list)
+        self.assertEqual(
+            response.data["results"][0]["title"], self.notice_data["title"]
+        )
 
     def test_create_notice(self):
         """공지사항 생성 테스트"""

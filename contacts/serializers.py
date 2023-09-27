@@ -16,4 +16,4 @@ class ContactListSerializer(serializers.ModelSerializer):
 class ContactDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactNumber
-        exclude = ["house"]
+        exclude = ["created_at", "updated_at"]

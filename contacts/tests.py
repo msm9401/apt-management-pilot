@@ -73,9 +73,9 @@ class ContactListTest(APITestCase):
             HTTP_AUTHORIZATION=f"token {self.token}",
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIsInstance(response.data, list)
+        self.assertIsInstance(response.data["results"], list)
         self.assertEqual(
-            response.data[0]["contact_to"], self.contact_data["contact_to"]
+            response.data["results"][0]["contact_to"], self.contact_data["contact_to"]
         )
 
     def test_create_contact(self):

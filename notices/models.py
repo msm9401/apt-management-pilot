@@ -21,3 +21,4 @@ class Notice(CommonModel):
 
     class Meta:
         db_table = "notice"
+        ordering = ["-created_at"]

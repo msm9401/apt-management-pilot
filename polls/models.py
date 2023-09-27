@@ -33,6 +33,7 @@ class Question(CommonModel):
 
     class Meta:
         db_table = "question"
+        ordering = ["-created_at"]
 
 
 class Choice(CommonModel):

@@ -9,11 +9,18 @@ class NoticeListSerializer(serializers.ModelSerializer):
         fields = [
             "pk",
             "title",
-            "created_at",
+            "created_at_string",
         ]
 
 
 class NoticeDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notice
-        exclude = ["house"]
+        # exclude = ["house"]
+        fields = [
+            "pk",
+            "title",
+            "content",
+            "created_at_string",
+            "updated_at_string",
+        ]
