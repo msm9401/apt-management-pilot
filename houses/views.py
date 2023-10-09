@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ParseError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import get_object_or_404
+from rest_framework import status
 
 from .serializers import ApartmentSerializer
 from .models import Apartment
@@ -19,6 +20,13 @@ class ApartmentList(APIView):
     """
     랜덤 아파트 리스트(로그인 안했을때)
     본인 아파트(로그인 했을때)
+
+    ParseError 발생 시
+    {
+        "detail": "ParseError안에 정의한 문자열",
+        "error": "config - exceptions.py에 정의한 문자열"
+        "status_code": 400
+    }
     """
 
     def get(self, request):
@@ -33,7 +41,7 @@ class ApartmentList(APIView):
 
             # cache.set(f"{request.user}:house_list", serializer.data, 60)
 
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
         # 로그인 안했을때
         # cached_random_house = cache.get("random_house_list")
@@ -44,7 +52,7 @@ class ApartmentList(APIView):
         min_apt_id = Apartment.objects.aggregate(min_apt_id=Min("id"))["min_apt_id"]
 
         if not max_apt_id:
-            raise ParseError("아파트 정보를 불러올 수 없습니다.")
+            raise ParseError("아파트 정보를 불러올 수 없습니다.")  # 400
 
         random_apt_pk_list = []
         for _ in range(10):
@@ -56,7 +64,7 @@ class ApartmentList(APIView):
 
         # cache.set("random_house_list", serializer.data, 60 * 60)
 
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ApartmentDetail(APIView):
@@ -69,7 +77,7 @@ class ApartmentDetail(APIView):
     def get(self, request, kapt_name, pk):
         apartment = self.get_object(kapt_name, pk)
         serializer = ApartmentSerializer(apartment)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 임시
     # TODO : 실제 아파트 주민인지 검증하는 로직 필요
@@ -77,18 +85,27 @@ class ApartmentDetail(APIView):
         apartment = self.get_object(kapt_name, pk)
         request.user.my_houses.add(apartment)
         # cache.delete(f"{request.user}:house_list")
-        return Response({"messages": "아파트 정보를 추가했습니다."})
+        return Response(status=status.HTTP_201_CREATED)
 
 
 class SearchApartment(APIView):
 
-    """아파트 검색"""
+    """
+    아파트 검색
+
+    ParseError 발생 시
+    {
+        "detail": "ParseError안에 정의한 문자열",
+        "error": "config - exceptions.py에 정의한 문자열"
+        "status_code": 400
+    }
+    """
 
     def get(self, request):
         if not request.query_params.get("keyword"):
-            raise ParseError("검색어를 입력하세요.")
+            raise ParseError("검색어를 입력하세요.")  # 400
         if len(request.query_params.get("keyword")) == 1:
-            raise ParseError("1글자 이상으로 검색하세요.")
+            raise ParseError("1글자 이상으로 검색하세요.")  # 400
         apt_searched = Apartment.objects.filter(
             Q(kapt_name__icontains=request.query_params.get("keyword"))
             | Q(address_do__icontains=request.query_params.get("keyword"))
@@ -96,6 +113,6 @@ class SearchApartment(APIView):
             | Q(address_dong__icontains=request.query_params.get("keyword"))
         )
         if not apt_searched:
-            raise ParseError("찾으시는 결과가 없습니다.")
+            raise ParseError("찾으시는 결과가 없습니다.")  # 400
         serializers = ApartmentSerializer(apt_searched, many=True)
-        return Response(serializers.data)
+        return Response(serializers.data, status=status.HTTP_200_OK)

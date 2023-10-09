@@ -43,14 +43,14 @@ class FeedList(APIView, PaginationHandlerMixin):
             FeedListSerializer(page, many=True).data
         )
 
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 피드 생성
     def post(self, request, kapt_name):
         kapt_code = request.user.check_my_house(kapt_name=kapt_name)
 
         serializer = FeedDetailSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        serializer.is_valid(raise_exception=True)  # 400
         serializer.save(
             user=request.user,
             house=Apartment.objects.get(kapt_code=kapt_code),
@@ -81,22 +81,22 @@ class FeedDetail(APIView):
     def get(self, request, kapt_name, pk):
         feed = self.get_object(kapt_name, pk)
         serializer = FeedDetailSerializer(feed)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 피드 수정
     def put(self, request, kapt_name, pk):
         feed = self.get_object(kapt_name, pk)
         if feed.user != request.user:
-            raise PermissionDenied
+            raise PermissionDenied  # 403
         serializer = FeedDetailSerializer(feed, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
+        serializer.is_valid(raise_exception=True)  # 400
         serializer.save()
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 피드에 대한 댓글 추가
     def post(self, request, kapt_name, pk):
         serializer = CommentDetailSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        serializer.is_valid(raise_exception=True)  # 400
         serializer.save(
             user=request.user,
             feed=self.get_object(kapt_name, pk),
@@ -107,6 +107,6 @@ class FeedDetail(APIView):
     def delete(self, request, kapt_name, pk):
         feed = self.get_object(kapt_name, pk)
         if feed.user != request.user:
-            raise PermissionDenied
+            raise PermissionDenied  # 403
         feed.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

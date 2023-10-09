@@ -1,10 +1,10 @@
-from django.contrib.auth import login  # 임시
-
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.generics import get_object_or_404
+from rest_framework import status
+
 from knox.views import LoginView as KnoxLoginView
 from knox.models import AuthToken
 
@@ -42,7 +42,7 @@ class PublicUserProfile(APIView):
                 "comments": CommentDetailSerializer(comments, many=True),
             },
         )
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class MyProfile(APIView):
@@ -69,7 +69,7 @@ class MyProfile(APIView):
                 "comments": CommentDetailSerializer(comments, many=True),
             },
         )
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, kapt_name):
         user = request.user
@@ -78,25 +78,28 @@ class MyProfile(APIView):
             data=request.data,
             partial=True,
         )
-        serializer.is_valid(raise_exception=True)
+        serializer.is_valid(raise_exception=True)  # 400
         serializer.save()
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CreateAccount(APIView):
 
     """회원 가입"""
 
+    permission_classes = [AllowAny]
+
     def post(self, request):
         serializer = CreateUserSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        serializer.is_valid(raise_exception=True)  # 400
         user = serializer.save()
         serializer = CreateUserSerializer(user)
         return Response(
             {
                 "user": serializer.data,
                 "token": AuthToken.objects.create(user)[1],
-            }
+            },
+            status=status.HTTP_201_CREATED,
         )
 
 
@@ -108,25 +111,13 @@ class LogIn(KnoxLoginView):
 
     def post(self, request, format=None):
         serializer = AuthTokenSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        serializer.is_valid(raise_exception=True)  # 400
         user = serializer.validated_data["user"]
-        login(request, user)  # 임시
         serializer = TinyUserSerializer(user)
         return Response(
             {
                 "user": serializer.data,
                 "token": AuthToken.objects.create(user)[1],
-            }
+            },
+            status=status.HTTP_200_OK,
         )
-
-
-# 임시
-""" class LogOut(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        logout(request)
-        return Response({"ok": "bye!"}) """
-
-
-# 인증부분은 프론트할때 마무리하자.(토큰발급후 토큰으로 myprofile 확인함.)

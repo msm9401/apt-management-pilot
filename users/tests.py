@@ -15,7 +15,7 @@ class UserRegistrationTest(APITestCase):
         response = self.client.post(url, data)
         result = response.json()
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertEqual(result["user"]["username"], "testuser")
 
 
@@ -64,8 +64,13 @@ class UserTest(APITestCase):
 
     # 유저 프로필
     def test_get_user_profile(self):
-        user = self.client.post(reverse("login"), self.data).data["user"]["username"]
-        response = self.client.get(f"/api/v1/users/<str:kapt_name>/profile/@{user}")
+        login_user = self.client.post(reverse("login"), self.data)
+        username = login_user.data["user"]["username"]
+        token = login_user.data["token"]
+        response = self.client.get(
+            path=f"/api/v1/users/<str:kapt_name>/profile/@{username}",
+            HTTP_AUTHORIZATION=f"token {token}",
+        )
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["username"], self.data["username"])

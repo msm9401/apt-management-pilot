@@ -24,7 +24,7 @@ class FeedComment(APIView):
     def get(self, request, kapt_name, pk):
         comment = self.get_object(kapt_name, pk)
         serializer = CommentDetailSerializer(comment)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 댓글에 대한 대댓글 추가
     def post(self, request, kapt_name, pk):
@@ -35,7 +35,7 @@ class FeedComment(APIView):
         #    raise MethodNotAllowed(request.method)
 
         serializer = CommentDetailSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        serializer.is_valid(raise_exception=True)  # 400
         serializer.save(
             user=request.user,
             feed=comment.feed,
@@ -47,16 +47,16 @@ class FeedComment(APIView):
     def put(self, request, kapt_name, pk):
         comment = self.get_object(kapt_name, pk)
         if comment.user != request.user:
-            raise PermissionDenied
+            raise PermissionDenied  # 403
         serializer = CommentDetailSerializer(comment, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
+        serializer.is_valid(raise_exception=True)  # 400
         serializer.save()
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 댓글 삭제
     def delete(self, request, kapt_name, pk):
         comment = self.get_object(kapt_name, pk)
         if comment.user != request.user:
-            raise PermissionDenied
+            raise PermissionDenied  # 403
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
