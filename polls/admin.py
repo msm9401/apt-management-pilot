@@ -9,12 +9,10 @@ class ChoiceAdminInline(admin.TabularInline):
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
-
     list_display = (
         "title",
         "created_at",
         "end_date",
-        "remaining_time",
         "status",
         "house",
     )

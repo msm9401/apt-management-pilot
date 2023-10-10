@@ -7,7 +7,7 @@ class QuestionListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = [
-            "pk",
+            "id",
             "created_at_string",
             "title",
             "end_date",
@@ -35,3 +35,25 @@ class QuestionDetailSerializer(serializers.ModelSerializer):
             "description",
             "votes",
         )
+
+
+class ChoiceListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Choice
+        exclude = [
+            "created_at",
+            "updated_at",
+            "question",
+            "votes",
+        ]
+
+
+class ChoiceDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Choice
+        fields = [
+            "id",
+            "title",
+            "description",
+            "question",
+        ]

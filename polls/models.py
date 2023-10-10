@@ -23,14 +23,6 @@ class Question(CommonModel):
     def __str__(self):
         return self.title
 
-    def remaining_time(self):
-        end_data = self.end_date.strftime("%Y-%m-%d %H:%M:%S")
-        conversion_end_data = self.end_date.strptime(end_data, "%Y-%m-%d %H:%M:%S")
-        try:
-            return conversion_end_data - datetime.datetime.now()
-        except:
-            return 0
-
     class Meta:
         db_table = "question"
         ordering = ["-created_at"]
@@ -56,3 +48,4 @@ class Choice(CommonModel):
 
     class Meta:
         db_table = "choice"
+        ordering = ["created_at"]
