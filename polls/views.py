@@ -1,12 +1,17 @@
+from datetime import datetime
+
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.db.models import F
+from django.core.cache import cache
+from django.utils import timezone
 
 from rest_framework import generics
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 
 from common.permissions import IsAdminUserOrAuthenticatedReadOnly
 from houses.models import Apartment
@@ -26,7 +31,7 @@ class QuestionListCreate(generics.ListCreateAPIView):
     def get_queryset(self):
         kapt_name = self.kwargs["kapt_name"]
         kapt_code = self.request.user.check_my_house(kapt_name=kapt_name)
-        queryset = Question.objects.filter(house__kapt_code=kapt_code)
+        queryset = Question.objects.filter(house__kapt_code=kapt_code, status=True)
         return queryset
 
     def perform_create(self, serializer):
@@ -85,9 +90,10 @@ class ChoiceListCreate(generics.ListCreateAPIView):
             return ChoiceDetailSerializer
 
 
-# 선택지 투표 및 조작
-@api_view(["GET", "POST", "PUT", "DELETE"])
-def vote(request, kapt_name, pk, choice_pk):
+# 선택지 상세정보
+@api_view(["GET", "PUT", "DELETE"])
+@permission_classes([IsAdminUserOrAuthenticatedReadOnly])
+def choice_detail(request, kapt_name, pk, choice_pk):
     kapt_code = request.user.check_my_house(kapt_name=kapt_name)
 
     question = get_object_or_404(
@@ -98,17 +104,6 @@ def vote(request, kapt_name, pk, choice_pk):
     if request.method == "GET":
         serializer = ChoiceDetailSerializer(selected_choice)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-    # 투표
-    elif request.method == "POST":
-        selected_choice.votes = F("votes") + 1
-        selected_choice.save()
-
-        # 투표 목록으로 redirect
-        return HttpResponseRedirect(
-            reverse("polls:question", kwargs={"kapt_name": kapt_name}),
-            status=status.HTTP_302_FOUND,
-        )  # 302
 
     # 선택지 수정
     elif request.method == "PUT":
@@ -123,3 +118,79 @@ def vote(request, kapt_name, pk, choice_pk):
     elif request.method == "DELETE":
         selected_choice.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# 선택지 투표
+@api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
+def vote(request, kapt_name, pk, choice_pk):
+    kapt_code = request.user.check_my_house(kapt_name=kapt_name)
+
+    question = get_object_or_404(
+        Question.objects.filter(house__kapt_code=kapt_code), pk=pk
+    )
+    selected_choice = get_object_or_404(Choice, question=question, pk=choice_pk)
+
+    if request.method == "GET":
+        serializer = ChoiceDetailSerializer(selected_choice)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    elif request.method == "POST":
+        # 투표 했는지 확인
+        voted_check = cache.get(
+            f"{question.title.replace(' ','')}:voted_user:{request.user}"
+        )
+
+        # 캐시 hit시 투표 block
+        if voted_check:
+            return Response(
+                {
+                    "detail": "이미 투표를 마쳤습니다.",
+                    "status_code": status.HTTP_403_FORBIDDEN,
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # 투표가 닫혔을때 block
+        if question.status == False:
+            return Response(
+                {
+                    "detail": "투표가 닫혔습니다.",
+                    "status_code": status.HTTP_403_FORBIDDEN,
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # 투표 시간 설정을 했을 때 ttl
+        # 투표 시간이 지났다면 투표 block
+        # 추가로 604800(7일) 더해준 이유는 투표율 저조로 인해서 투표기간이 늘어날 경우를 대비
+        if question.end_date is not None:
+            time = question.end_date - datetime.now(tz=timezone.utc)
+
+            if time.days > 0:
+                ttl = (time.days * 24 * 60 * 60) + time.seconds + 604800
+            elif time.days < 0:
+                return Response(
+                    {
+                        "detail": "투표 시간이 지났습니다.",
+                        "status_code": status.HTTP_403_FORBIDDEN,
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+            else:
+                ttl = time.seconds + 604800
+
+        # 투표 시간 설정을 안했을 때 ttl 14일로 설정
+        ttl = 1209600  # 14일
+
+        selected_choice.votes = F("votes") + 1
+        selected_choice.save()
+
+        # ttl 30초 시간 설정은 임시(배포 시 ttl값으로 변경 예정)
+        # 캐시 key에 공백 있을시 에러발생
+        cache.set(f"{question.title.replace(' ','')}:voted_user:{request.user}", 1, 30)
+
+        # 투표 목록으로 redirect
+        return HttpResponseRedirect(
+            reverse("polls:question", kwargs={"kapt_name": kapt_name})
+        )  # 302

@@ -31,9 +31,9 @@ class QuestionDetailSerializer(serializers.ModelSerializer):
 
     def get_choice_list(self, question):
         return Choice.objects.filter(question=question.id).values(
+            "id",
             "title",
             "description",
-            "votes",
         )
 
 

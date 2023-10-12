@@ -8,5 +8,10 @@ urlpatterns = [
     path("", views.QuestionListCreate.as_view(), name="question"),
     path("<int:pk>", views.QuestionDetail.as_view(), name="question-detail"),
     path("<int:pk>/choice", views.ChoiceListCreate.as_view(), name="choice"),
-    path("<int:pk>/choice/<int:choice_pk>", views.vote, name="vote"),
+    path(
+        "<int:pk>/choice/<int:choice_pk>",
+        views.choice_detail,
+        name="choice-detail",
+    ),
+    path("<int:pk>/choice/<int:choice_pk>/vote", views.vote, name="vote"),
 ]
