@@ -181,7 +181,8 @@ def vote(request, kapt_name, pk, choice_pk):
                 ttl = time.seconds + 604800
 
         # 투표 시간 설정을 안했을 때 ttl 14일로 설정
-        ttl = 1209600  # 14일
+        else:
+            ttl = 1209600  # 14일
 
         selected_choice.votes = F("votes") + 1
         selected_choice.save()
@@ -190,7 +191,4 @@ def vote(request, kapt_name, pk, choice_pk):
         # 캐시 key에 공백 있을시 에러발생
         cache.set(f"{question.title.replace(' ','')}:voted_user:{request.user}", 1, 30)
 
-        # 투표 목록으로 redirect
-        return HttpResponseRedirect(
-            reverse("polls:question", kwargs={"kapt_name": kapt_name})
-        )  # 302
+        return Response(status=status.HTTP_200_OK)
