@@ -32,21 +32,21 @@ class ApartmentList(APIView):
     def get(self, request):
         # 로그인 했을때
         if not request.user.is_anonymous:
-            # cached_house = cache.get(f"{request.user}:house_list")
-            # if cached_house:
-            #     return Response(cached_house)
+            cached_house = cache.get(f"{request.user}:house_list")
+            if cached_house:
+                return Response(cached_house)
 
             my_houses = request.user.my_houses
             serializer = ApartmentSerializer(my_houses, many=True)
 
-            # cache.set(f"{request.user}:house_list", serializer.data, 60)
+            cache.set(f"{request.user}:house_list", serializer.data, 1209600)  # 14일
 
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         # 로그인 안했을때
-        # cached_random_house = cache.get("random_house_list")
-        # if cached_random_house:
-        #     return Response(cached_random_house)
+        cached_random_house = cache.get("random_house_list")
+        if cached_random_house:
+            return Response(cached_random_house)
 
         max_apt_id = Apartment.objects.aggregate(max_apt_id=Max("id"))["max_apt_id"]
         min_apt_id = Apartment.objects.aggregate(min_apt_id=Min("id"))["min_apt_id"]
@@ -62,7 +62,7 @@ class ApartmentList(APIView):
         random_apt_list = Apartment.objects.filter(id__in=random_apt_pk_list)
         serializer = ApartmentSerializer(random_apt_list, many=True)
 
-        # cache.set("random_house_list", serializer.data, 60 * 60)
+        cache.set("random_house_list", serializer.data, 60 * 60)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -84,7 +84,9 @@ class ApartmentDetail(APIView):
     def post(self, request, kapt_name, pk):
         apartment = self.get_object(kapt_name, pk)
         request.user.my_houses.add(apartment)
-        # cache.delete(f"{request.user}:house_list")
+
+        cache.delete(f"{request.user}:house_list")
+
         return Response(status=status.HTTP_201_CREATED)
 
 

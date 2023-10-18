@@ -1,0 +1,23 @@
+# Unit test / coverage reports
+**/htmlcov/
+**/.tox/
+**/.nox/
+**/.coverage
+**/.coverage.*
+**/.cache
+**/nosetests.xml
+**/coverage.xml
+**/*.cover
+**/*.py,cover
+**/.hypothesis/
+**/.pytest_cache/
+
+# Django stuff:
+**/*.log
+**/local_settings.py
+**/db.sqlite3
+**/db.sqlite3-journal
+
+.git
+.gitignore
+*.md
