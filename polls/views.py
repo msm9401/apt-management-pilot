@@ -189,6 +189,6 @@ def vote(request, kapt_name, pk, choice_pk):
 
         # ttl 30초 시간 설정은 임시(배포 시 ttl값으로 변경 예정)
         # 캐시 key에 공백 있을시 에러발생
-        cache.set(f"{question.title.replace(' ','')}:voted_user:{request.user}", 1, 30)
+        cache.set(f"{question.title.replace(' ','')}:voted_user:{request.user}", 1, ttl)
 
         return Response(status=status.HTTP_200_OK)
