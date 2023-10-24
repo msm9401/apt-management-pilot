@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin
 
 from .models import User
@@ -64,6 +64,8 @@ class UserAdmin(UserAdmin):
 
     autocomplete_fields = ["my_houses"]
 
+    actions = ("make_inactive", "make_active")
+
     def get_queryset(self, request):
         """
         관리자 아파트의 유저만 get.
@@ -77,3 +79,15 @@ class UserAdmin(UserAdmin):
             )
 
         return super().get_queryset(request)
+
+    def make_inactive(self, request, queryset):
+        updated_count = queryset.update(is_confirmed=False)
+        return messages.success(request, f"{updated_count} 명의 유저가 비활성화되었습니다.")
+
+    make_inactive.short_description = "선택된 유저 비활성화하기"
+
+    def make_active(self, request, queryset):
+        updated_count = queryset.update(is_confirmed=True)
+        return messages.success(request, f"{updated_count} 명의 유저가 활성화되었습니다.")
+
+    make_active.short_description = "선택된 유저 활성화하기"

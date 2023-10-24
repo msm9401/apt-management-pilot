@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 
 from .models import Question, Choice
 
@@ -25,6 +25,8 @@ class QuestionAdmin(admin.ModelAdmin):
     search_help_text = "투표(설문조사) 제목 검색"
 
     autocomplete_fields = ["house"]
+
+    actions = ("make_inactive", "make_active")
 
     inlines = [ChoiceAdminInline]
 
@@ -55,3 +57,15 @@ class QuestionAdmin(admin.ModelAdmin):
             return super().save_model(request, obj, form, change)
 
         return super().save_model(request, obj, form, change)
+
+    def make_inactive(self, request, queryset):
+        updated_count = queryset.update(status=False)
+        return messages.success(request, f"{updated_count} 개의 투표(설문조사)가 비활성화되었습니다.")
+
+    make_inactive.short_description = "선택된 투표(설문조사) 비활성화하기"
+
+    def make_active(self, request, queryset):
+        updated_count = queryset.update(status=True)
+        return messages.success(request, f"{updated_count} 개의 투표(설문조사)가 활성화되었습니다.")
+
+    make_active.short_description = "선택된 투표(설문조사) 활성화하기"
