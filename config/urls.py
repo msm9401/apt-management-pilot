@@ -26,6 +26,11 @@ urlpatterns = [
     # path("__debug__/", include("debug_toolbar.urls")),
 ]
 
+admin.site.site_header = "아파트 관리"
+admin.site.site_title = "아파트 관리"
+admin.site.index_title = "백오피스"
+admin.site.site_url = "/admin/"
+
 if settings.DEBUG:
     urlpatterns += [path("__debug__/", include("debug_toolbar.urls"))]
 else:
