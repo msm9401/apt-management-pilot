@@ -86,7 +86,9 @@ class CustomisedJSONFormatter(JSONFormatter):
         return extra
 
 
-LOGGING = {
+# Docker 개발 환경 실행 시 DEV_LOGGING에서 LOGGING으로 이름 변경.
+# Docker 개발 환경 실행 시 logs폴더 존재 여부 확인(없으면 오류). 아래 "filename" 참고.
+DEV_LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
