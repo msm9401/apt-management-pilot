@@ -90,15 +90,15 @@ class CustomisedJSONFormatter(JSONFormatter):
 # https://docs.python.org/ko/3.8/library/sys.html#sys.argv
 # python manage.py test 명령 수행하면
 # sys.argv[1] = test, len(sys.argv) = 2
-import sys
+# import sys
 
-if len(sys.argv) > 1 and sys.argv[1] == "test":
-    logging.disable(logging.CRITICAL)
+# if len(sys.argv) > 1 and sys.argv[1] == "test":
+#     logging.disable(logging.CRITICAL)
 # ======================================================
 
 # Docker 개발 환경 실행 시 DEV_LOGGING에서 LOGGING으로 이름 변경.
 # Docker 개발 환경 실행 시 logs폴더 존재 여부 확인(없으면 오류). 아래 "filename" 참고.
-LOGGING = {
+DEV_LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
