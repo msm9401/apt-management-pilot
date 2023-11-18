@@ -10,8 +10,8 @@ if [ ! -e /$CONTAINER_FIRST_STARTUP ]; then
     echo 'Running migrations...'
     python manage.py migrate --no-input
 
-    echo 'Saving apartment data...'
-    python manage.py get_houses
+    #echo 'Saving apartment data...'
+    #python manage.py get_houses
 
     echo 'Starting develop server...'
     python manage.py runserver 0.0.0.0:8000

@@ -4,24 +4,22 @@ from houses.api import apt_list
 
 
 class Command(BaseCommand):
-
     help = "This command saves Apartment"
 
     """
-    대구:27[0], 인천:28[0], 광주:29[0], 대전:30[0], 울산:31[0], 경기:41[1], 강원:42[0]
-    충북:43[0], 충남:44[0], 전북:45[0], 전남:46[0], 경북:47[0], 경남:48[0], 제주:50[1]  
+    대구:27, 인천:28, 광주:29, 대전:30, 울산:31, 경기:41, 강원:42
+    충북:43, 충남:44, 전북:45, 전남:46, 경북:47, 경남:48, 제주:50  
     apt_list()에 필요한 지역 코드 대입
-
-    서비스 지역 확장시 추가하는식으로?...
-
-    [1] : 저장함
-    [0] : 저장안함
 
     실행 : python manage.py get_houses
     """
 
     def handle(self, *args, **options):
-        apt_data = apt_list(41)
+        # 임시로 경기도 아파트만 저장
+        code = 41
+
+        apt_data = apt_list(code)
+
         for a in apt_data:
             try:
                 Apartment(
@@ -42,4 +40,5 @@ class Command(BaseCommand):
                     kapt_code=a["kaptCode"],
                     kapt_name=a["kaptName"],
                 ).save()
+
         self.stdout.write(self.style.SUCCESS("Houses Saved!"))

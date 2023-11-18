@@ -1,0 +1,23 @@
+apiVersion: 1 # Dont remove this or you'll suffer
+
+datasources:
+  - name: prometheus
+    type: prometheus
+    uid: my-prometheus
+    access: browser
+    url: http://prometheus:9090
+    isDefault: false
+    version: 1
+    editable: true
+    basicAuth: false
+
+  - name: loki
+    type: loki
+    uid: my-loki
+    access: server
+    orgId: 1
+    url: http://loki:3100
+    basicAuth: false
+    isDefault: false
+    version: 1
+    editable: true

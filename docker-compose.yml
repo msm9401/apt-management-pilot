@@ -22,5 +22,49 @@ services:
     ports:
       - "5432:5432"
 
+  prometheus:
+    image: prom/prometheus
+    hostname: prometheus
+    container_name: prometheus
+    command: --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./prometheus:/etc/prometheus
+    ports:
+      - 9090:9090
+
+  grafana:
+    image: grafana/grafana
+    hostname: grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/dashboard.yaml:/etc/grafana/provisioning/datasources/dashboard.yaml
+    depends_on:
+      - loki
+      - prometheus
+
+  promtail:
+    image: grafana/promtail:2.5.0
+    container_name: promtail
+    volumes:
+      - ./promtail/promtail.yml:/etc/promtail/promtail.yml
+      - ./logs/django.log:/var/log/django.log
+    command: --config.file=/etc/promtail/promtail.yml
+    depends_on:
+      - web
+
+  loki:
+    image: grafana/loki:2.5.0
+    hostname: loki
+    container_name: loki
+    ports:
+      - "3100:3100"
+    # volumes:
+    #   - ./loki/:/loki/
+    # command: -config.file=/loki/local-config.yml
+    depends_on:
+      - promtail
+
 volumes:
   postgres_data:
