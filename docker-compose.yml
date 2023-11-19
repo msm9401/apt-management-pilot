@@ -3,6 +3,8 @@ version: "3"
 services:
   web:
     build: .
+    hostname: django
+    container_name: django
     command: ./entrypoint.sh
     volumes:
       - ./:/usr/src/app/
@@ -12,15 +14,26 @@ services:
       - ./.env.dev
     depends_on:
       - db
+      - redis
 
   db:
     image: postgres:14.4-alpine
+    hostname: postgres
+    container_name: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env.postgres.dev
     ports:
       - "5432:5432"
+
+  redis:
+    image: redis:alpine
+    hostname: redis
+    container_name: redis
+    command: redis-server --requirepass apt_management_password
+    ports:
+      - "6000:6379"
 
   prometheus:
     image: prom/prometheus

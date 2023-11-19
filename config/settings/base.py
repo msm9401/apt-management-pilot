@@ -110,7 +110,7 @@ REST_FRAMEWORK = {
 # CACHES = {
 #     "default": {
 #         "BACKEND": "django_redis.cache.RedisCache",
-#         "LOCATION": "redis://:apt_management_password@redis:6000/1",
+#         "LOCATION": "redis://:apt_management_password@redis:6379/1",
 #         "OPTIONS": {
 #             "CLIENT_CLASS": "django_redis.client.DefaultClient",
 #         },
