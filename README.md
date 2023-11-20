@@ -11,7 +11,7 @@
 선배포 링크 : http://apt-management-bucket.s3-website.ap-northeast-2.amazonaws.com<br>
 ❗️ 기능 확인 목적의 데모 사이트<br>
 ❗️ 업데이트 버전 계속 배포 예정<br><br>
-❗️ 아래와 같은 화면을 확인하시려면 회원가입 후 검색 창에 "용인신갈푸르지오" 를 검색 후 초록색 하트를 눌러 본인 아파트로 등록 후(현재는 별도 인증 과정 없음) 확인해 주세요. 회원 가입 후 본인 아파트 등록을 하지 않고 접속 시 임시로 "Page Not Found"가 뜹니다.<br>
+❗️ 아래와 같은 화면을 확인하시려면 회원가입 후 검색 창에 "용인신갈푸르지오" 를 검색 후 초록색 하트를 눌러 본인 아파트로 등록 후(현재는 별도 인증 과정 없음) 확인해 주세요.<br>
 
 <center><img src="https://github.com/msm9401/apt-management-pilot/assets/70134073/dcc68445-cf9f-4ebe-9137-cb170386878e" width="400" height="250"/></center>
 
@@ -27,13 +27,15 @@
 - 해당 아파트 주민들은 회원가입 후 관리사무소에서 실제 주민인지 확인 후 각 아파트 페이지에 접근할 수 있다.
 - 위의 기능을 이용함으로써 관리사무소는 아파트 관리를 조금 더 효율적으로 할 수 있고 주민 간에 소통이 강화되는 것을 기대할 수 있다.
 
-### 프로젝트 간략 구성도
+### 프로젝트 배포 환경 구성도
 
-![구성도 drawio](https://github.com/msm9401/apt-management-pilot/assets/70134073/6042dcd5-09cb-4b36-8af6-f5377ce93393)
+![KakaoTalk_20231119_224816524](https://github.com/msm9401/apt-management-pilot/assets/70134073/a77d38bf-38ca-497e-9cad-5485909d67ac)
 
 ❗️ 배포 후 aws 콘솔에서 변경한 부분이 있어서 깃허브 코드랑 다른 부분이 있을 수 있습니다.<br>
-❗️ 그림상에는 없지만 redis컨테이너도 ec2에서 돌아가고 있습니다.<br>
-❗️ gunicorn은 django컨테이너 안에 있습니다.<br>
+
+### 프로젝트 도커 개발 환경 구성도
+
+![KakaoTalk_20231119_224816664](https://github.com/msm9401/apt-management-pilot/assets/70134073/3f9b40ed-be19-458b-86c5-2358117f164c)
 
 ### 문제 상황 & 해결 & 회고 등등 기록
 
@@ -149,15 +151,53 @@ POSTGRES_PASSWORD="apt_management_password"
 
 <br>
 
-3. 도커 실행
+3. 로깅 설정 이름 변경 및 캐시 설정 주석 처리 해제
+
+```
+# repository의 최상단에 logs폴더 만들기
+
+# log 관련 파일들은 .gitignore에서 제외처리돼서 직접 만들어줘야 함
+
+mkdir logs
+```
+
+```
+# config/settings/develop.py
+
+# 로깅 설정 부분 DEV_LOGGING 에서 LOGGING 으로 이름 변경
+DEV_LOGGING = {
+    "version": 1,
+    ...
+}
+```
+
+```
+# config/settings/base.py
+
+# 캐시 설정 주석 처리된 부분 해제
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         ...
+#     }
+# }
+```
+
+❗️ 위 3번 설정들은 안해도 도커 실행은 되지만 실행되는 컨테이너들을 전부 활용하려면 설정 필요.<br>
+
+<br>
+
+4. 도커 실행
 
 ```
 docker-compose up --build
 ```
 
 ❗️ 서버 작동 확인 : http://127.0.0.1:8000/admin 또는 http://localhost:8000/admin<br>
-❗️ Mac에서 빌드 실패할 경우 아래와 같이 베이스 이미지와 파이널 이미지의 FROM에 --platform=linux/amd64 추가 후 다시 실행.<br>
-❗️ 국토교통부에서 제공되는 api가 종종 튕기는 경우가 있음.<br>
+❗️ 프로메테우스 작동 확인 : http://127.0.0.1:9090<br>
+❗️ 그라파나 작동 확인 : http://127.0.0.1:3000 아이디 : admin, 패스워드 : admin<br>connections 탭에서 새로운 데이터 소스 추가할 필요 없이 explore 탭에 들어가서 Loki와 Prometheus 조회 가능
+<br><br>
+❗️ Mac에서 빌드 실패할 경우 아래와 같이 각 FROM에 `--platform=linux/amd64` 추가 후 다시 실행. Dockerfile을 아래 파일로 변경 후 빌드. (필자는 WSL2 환경)<br>
 
 ```
 # Dockerfile
@@ -192,13 +232,21 @@ ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]
 
 <br>
 
-4. 도커 컨테이너 진입 후 createsuperuser 실행
+4. 장고 컨테이너 진입 후 데이터 세팅 및 admin생성
 
 ```
-docker exec -it apt-management-pilot-web-1 /bin/bash
+# 컨테이너 진입
+docker exec -it django /bin/bash
 
+# admin 생성 (아이디와 비밀번호만 필수)
 python manage.py createsuperuser
+
+# 아파트 데이터 세팅
+python manage.py get_houses
 ```
+
+❗️ 컨테이너 진입 안될 경우 `docker ps` 로 8000번 포트 컨테이너 이름 확인 후 진입.<br>
+❗️ 국토교통부에서 제공되는 api가 종종 튕기는 경우가 있음. 튕기더라도 재시도. 여러 번 재시도해도 튕길경우 점검중일 가능성 큼.<br>
 
 ---
 

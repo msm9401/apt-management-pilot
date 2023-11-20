@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# dockerize -wait tcp://postgres:5432 -timeout 100s
+# dockerize -wait tcp://redis:6379 -timeout 100s
+
 # This script checks if the container is started for the first time.
 CONTAINER_FIRST_STARTUP="CONTAINER_FIRST_STARTUP"
 
