@@ -195,7 +195,7 @@ docker-compose up --build
 
 ❗️ 서버 작동 확인 : http://127.0.0.1:8000/admin 또는 http://localhost:8000/admin<br>
 ❗️ 프로메테우스 작동 확인 : http://127.0.0.1:9090<br>
-❗️ 그라파나 작동 확인 : http://127.0.0.1:3000 아이디 : admin, 패스워드 : admin<br>connections 탭에서 새로운 데이터 소스 추가할 필요 없이 explore 탭에 들어가서 Loki와 Prometheus 조회 가능
+❗️ 그라파나 작동 확인 : http://127.0.0.1:3000 아이디 : admin, 패스워드 : admin<br>connections 탭에서 새로운 데이터 소스 추가할 필요 없이 explore 탭에 들어가서 Loki와 Prometheus 바로 조회 가능
 <br><br>
 ❗️ Mac에서 빌드 실패할 경우 아래와 같이 각 FROM에 `--platform=linux/amd64` 추가 후 다시 실행. Dockerfile을 아래 파일로 변경 후 빌드. (필자는 WSL2 환경)<br>
 

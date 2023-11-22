@@ -10,6 +10,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+IN_DOCKER = int(os.environ.get("IN_DOCKER", 0))
+
 DEV_APPS = [
     "debug_toolbar",
 ]
@@ -96,8 +98,6 @@ class CustomisedJSONFormatter(JSONFormatter):
 #     logging.disable(logging.CRITICAL)
 # ======================================================
 
-# Docker 개발 환경 실행 시 DEV_LOGGING에서 LOGGING으로 이름 변경.
-# Docker 개발 환경 실행 시 logs폴더 존재 여부 확인(없으면 오류). 아래 "filename" 참고.
 DEV_LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -145,3 +145,20 @@ DEV_LOGGING = {
         "handlers": ["console", "file"],
     },
 }
+
+# 도커 환경
+if IN_DOCKER:
+    # logs폴더 생성
+    Path(f"{BASE_DIR}/logs").mkdir(parents=True, exist_ok=True)
+
+    LOGGING = DEV_LOGGING
+
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": os.environ.get("REDIS_URL"),
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            },
+        }
+    }
