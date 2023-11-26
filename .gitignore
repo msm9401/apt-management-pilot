@@ -57,6 +57,7 @@ cover/
 
 # Django stuff:
 *.log*
+logs/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
@@ -122,8 +123,8 @@ celerybeat.pid
 # Environments
 .env
 .env.postgres
-.env.dev
-.env.postgres.dev
+#.env.dev
+#.env.postgres.dev
 .env.prod
 .env.postgres.prod
 .venv

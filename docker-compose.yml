@@ -17,11 +17,14 @@ services:
       - redis
 
   db:
-    image: postgres:14.4-alpine
+    image: postgres:15-alpine
     hostname: postgres
     container_name: postgres
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+      - ./postgres/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./postgres/logs:/var/log/
     env_file:
       - ./.env.postgres.dev
     ports:
@@ -62,7 +65,8 @@ services:
     container_name: promtail
     volumes:
       - ./promtail/promtail.yml:/etc/promtail/promtail.yml
-      - ./logs:/var/log/
+      - ./logs:/var/log/django/
+      - ./postgres/logs:/var/log/postgresql/
     command: --config.file=/etc/promtail/promtail.yml
     depends_on:
       - web

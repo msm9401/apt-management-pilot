@@ -15,4 +15,9 @@ scrape_configs:
           - localhost
         labels:
           job: djangolog
-          __path__: "/var/log/django.log"
+          __path__: "/var/log/django/django.log"
+      - targets:
+          - localhost
+        labels:
+          job: postgreslog
+          __path__: "/var/log/postgresql/postgresql_log.json"
