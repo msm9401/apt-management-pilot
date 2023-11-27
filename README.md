@@ -107,6 +107,48 @@ kapt_code(단지 코드)에 대한 Index를 추가한 결과 covering Index 처�
 </div>
 </details>
 
+<details>
+  <summary> metrics을 수집하고 각 컨테이너에 분산된 log를 한곳에서 보도록 모니터링 시스템을 구축해 보자
+</summary><br>
+<div markdown="1">
+예전에 locust로 부하 테스트를 해보면서 일정 부하 이상 올라가면 이상 현상이 발생했는데 처음에는 뭐지 하다가 db 컨테이너에 들어가서 로그를 보고나서 max_connections 문제인 것을 알았다. 그때 느낀 게 이상 현상이 생길 때마다 일일이 컨테이너에 직접 접속해서 로그를 보는 것이 굉장히 귀찮다고 느꼈다. 그리고 실무에서는 훨씬 많은 곳에서 장애가 발생하면 대응해야 할 텐데 모니터링 환경을 구성하는 것은 필수일 것이라고 생각했다. 따라서 분산된 log를 한곳에서 보고 메트릭을 수집하여 시스템이 어떤 상태인지 측정할 수 있도록 모니터링 환경을 구성했다. 내 프로젝트 규모에는 무거운 ELK 스택보다 그나마 가벼운 PLG 스택이 어울리다고 생각하여 PLG 스택으로 선택했다. <br><br>
+
+- **과정**
+
+  - 깊게 파고들기보다는 전체적인 구조를 만들어 보았다. 조금 더 deep한 설정들은 구조만 잘 짜놓았으면 살을 붙이는 느낌으로 애자일하게 개발하는게 빠를 것이다.
+  - 간단하게 구조를 설명하면 장고 log와 db log를 파일로 생성하고 이 log 파일을 Promtail 컨테이너 볼륨에 마운트 해서 Loki에 log를 보내준 후 Grafana 대시보드와 연동하여 시각화하는 것이다.
+  - 장고 metrics은 prometheus로 수집하고 마찬가지로 Grafana 대시보드와 연동하여 시각화한다.<br><br>
+
+- **구축 결과**
+
+  <center><img src="https://github.com/msm9401/apt-management-pilot/assets/70134073/8fd53839-976a-42ce-8f68-a26e5054a7cb" width="400" height="250"/></center>
+
+  <center><img src="https://github.com/msm9401/apt-management-pilot/assets/70134073/2a44c6ff-d8e2-4367-8420-c23786ae0c54" width="400" height="250"/></center>
+
+  <center><img src="https://github.com/msm9401/apt-management-pilot/assets/70134073/a650249e-a809-4f57-8cf2-5103aeca909a" width="400" height="250"/></center>
+
+  <center><img src="https://github.com/msm9401/apt-management-pilot/assets/70134073/18191d48-416c-4000-b4e5-55e5903a57ee" width="400" height="250"/></center><br><br>
+
+- **결론**
+
+  - 위에 이미지처럼 실습 수준이지만 진행을 해보았다.
+  - 이런 로그들을 잘 모아서 관리하면 장애 대응뿐만 아니라 특정하게 많이 찍히는 로그들을 따로 모아두면 마케팅적으로 새로운 인사이트를 제시해 주지 않을까 한다.
+  - 그리고 서비스가 점점 커지면 데이터들을 더욱더 효과적으로 관리하기 위해 구축한 스택 뒤에 DW 같은 빅데이터를 위한 스택이 붙을 수 있을 것이다.
+  - 결국 데이터를 어떻게 관리하느냐에 따라 새로운 비즈니스 모델을 만드는데도 도움이 될 것이라고 생각한다.<br><br>
+
+- **생각해 봐야 할 점 & 계획**
+
+  - log 파일이 무한히 쌓이면 안 된다. 쌓이는 로그 파일들을 어떻게 처리할 건지 생각하자.
+  - MSA 환경이라면 Traces도 수집해서 각 노드에서 어느 정도의 시간이 필요했는지 병목 현상도 파악할 수 있을 것이다.
+  - 현재 django, postgresql 에서만 발생하는 log를 수집하도록 세팅했는데 Celery 스택을 추가해서 Django + nginx + redis + Celery + Celery beat + 등등 다양한 스택에서 발생하는 log를 수집하고 대시보드 세팅을 해보자.
+  - 그리고 celery에 flower도 연동하고 flower의 metrics 정보를 prometheus로 연계해 보자.
+  - 전체적으로 작동이 되게끔 설정해놨지만 log가 적재되는 Loki 설정 이라던가 Grafana 대시보드 세팅이라던가 공부해야 할 것들이 많다.
+  - 이렇게 모니터링 환경을 직접 구축해서 서버에 올리고 나서 유지 보수에 드는 리소스도 생각해 봐야 한다. 과연 내가 또는 내가 속해 있는 조직이 감당할 수 있을지 판단하는 것이 우선일 것이다.
+  - 모니터링 환경을 구축하는 게 별로일 수도 있다는 의미가 아닌 이미 좋은 엔터프라이즈급의 툴도 있으니 주어진 환경을 잘 판단해서 선택하자는 의미다.<br><br>
+
+</div>
+</details>
+
 ---
 
 ---
@@ -127,39 +169,7 @@ code .
 
 <br>
 
-2. repository의 최상단에 .env.dev 파일과 .env.postgres.dev 파일 추가하고 파일 내용을 아래와 같이 작성
-
-```
-# .env.dev 파일
-
-DEBUG="1"
-
-IN_DOCKER="1"
-
-SECRET_KEY="django-insecure-&!0&y+zz$6w+i7m9+=0*h12af*gs^dkcr0xnjdomfio1lisd)c"
-DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1
-
-SQL_ENGINE="django.db.backends.postgresql"
-SQL_DATABASE="apt_management_db"
-SQL_USER="apt_management_user"
-SQL_PASSWORD="apt_management_password"
-SQL_HOST="db"
-SQL_PORT="5432"
-
-REDIS_URL="redis://:apt_management_password@redis:6379/1"
-```
-
-```
-# .env.postgres.dev 파일
-
-POSTGRES_DB="apt_management_db"
-POSTGRES_USER="apt_management_user"
-POSTGRES_PASSWORD="apt_management_password"
-```
-
-<br>
-
-3. 도커 실행
+2. 도커 개발 환경 실행 (Mac에서 빌드 실패시 아래 Dockerfile 로 대체)
 
 ```
 docker-compose up --build
@@ -204,7 +214,7 @@ ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]
 
 <br>
 
-4. 장고 컨테이너 진입 후 admin생성
+3. 장고 컨테이너 진입 후 admin생성
 
 ```
 # 컨테이너 진입
