@@ -4,7 +4,6 @@ from .models import Apartment
 
 @admin.register(Apartment)
 class ApartmentAdmin(admin.ModelAdmin):
-
     list_display = (
         "address_do",
         "address_si",
@@ -14,8 +13,6 @@ class ApartmentAdmin(admin.ModelAdmin):
         "kapt_code",
         "kapt_name",
     )
-
-    list_filter = ("address_do", "address_si", "address_dong", "address_li")
 
     list_max_show_all = 5
 

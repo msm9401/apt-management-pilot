@@ -5,10 +5,7 @@ from .models import Photo, Video
 
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
-
     list_display = ("file", "feed", "complaint", "poll", "notice", "user", "house")
-
-    list_filter = ("user", "feed", "complaint", "poll", "notice")
 
     search_fields = ["house"]
 
@@ -19,10 +16,7 @@ class PhotoAdmin(admin.ModelAdmin):
 
 @admin.register(Video)
 class VideoAdmin(admin.ModelAdmin):
-
     list_display = ("file", "feed", "complaint", "notice", "user", "house")
-
-    list_filter = ("user", "feed", "complaint", "notice")
 
     search_fields = ["house"]
 

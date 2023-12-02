@@ -56,7 +56,7 @@ class UserAdmin(UserAdmin):
         "is_confirmed",
     )
 
-    list_filter = ("is_confirmed", "apt_number")
+    list_filter = ("is_confirmed",)
 
     search_fields = ["username", "name", "phone_number"]
 

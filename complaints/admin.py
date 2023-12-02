@@ -5,7 +5,6 @@ from .models import Complaint
 
 @admin.register(Complaint)
 class ComplaintAdmin(admin.ModelAdmin):
-
     list_display = (
         "title",
         "description",
@@ -15,7 +14,7 @@ class ComplaintAdmin(admin.ModelAdmin):
         "house",
     )
 
-    list_filter = ("user", "current_status", "house")
+    list_filter = ("current_status",)
 
     search_fields = ["house__kapt_name"]
 
