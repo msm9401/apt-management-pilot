@@ -162,3 +162,8 @@ if IN_DOCKER:
             },
         }
     }
+
+# celery setting
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+CELERY_TIMEZONE = TIME_ZONE  # "Asia/Seoul"
