@@ -38,6 +38,30 @@ services:
     ports:
       - "6000:6379"
 
+  celeryworker:
+    build: .
+    container_name: celeryworker
+    command: "celery -A config worker --loglevel=INFO"
+    volumes:
+      - ./:/usr/src/app/
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - redis
+      - db
+
+  flower:
+    build: .
+    hostname: flower
+    container_name: flower
+    command: "celery -A config flower"
+    env_file:
+      - ./.env.dev
+    ports:
+      - 5555:5555
+    depends_on:
+      - celeryworker
+
   prometheus:
     image: prom/prometheus
     hostname: prometheus
