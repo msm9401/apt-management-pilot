@@ -167,3 +167,21 @@ if IN_DOCKER:
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 CELERY_TIMEZONE = TIME_ZONE  # "Asia/Seoul"
+
+
+# 이미지 celery 업로드 테스트
+# AWS_ACCESS_KEY_ID = ""
+# AWS_SECRET_ACCESS_KEY = ""
+# AWS_REGION = "ap-northeast-2"
+
+# # S3 Storages
+# AWS_STORAGE_BUCKET_NAME = ""
+# AWS_S3_CUSTOM_DOMAIN = "%s.s3.amazonaws.com" % AWS_STORAGE_BUCKET_NAME
+# AWS_S3_OBJECT_PARAMETERS = {
+#     "CacheControl": "max-age=86400",
+# }
+# AWS_DEFAULT_ACL = "public-read"
+# AWS_LOCATION = "media"
+# AWS_S3_FILE_OVERWRITE = False
+
+# MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"

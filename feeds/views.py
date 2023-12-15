@@ -1,5 +1,3 @@
-from django.shortcuts import get_list_or_404
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
@@ -14,6 +12,7 @@ from .models import Feed
 from houses.models import Apartment
 from medias.models import Photo
 from config.pagination import PaginationHandlerMixin
+from .tasks import upload_photo
 
 
 class FeedPagination(PageNumberPagination):
@@ -51,18 +50,20 @@ class FeedList(APIView, PaginationHandlerMixin):
 
         serializer = FeedDetailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)  # 400
-        serializer.save(
+        new_feed = serializer.save(
             user=request.user,
             house=Apartment.objects.get(kapt_code=kapt_code),
         )
 
         if request.FILES:
-            Photo(
+            new_photo = Photo(
                 user=request.user,
                 house=Apartment.objects.get(kapt_code=kapt_code),
                 file=request.FILES["photos[]"],
-                feed=Feed.objects.latest("created_at"),
-            ).save()
+                feed=new_feed,
+            )
+            new_photo.save()
+            upload_photo.delay(new_photo.file.name)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
