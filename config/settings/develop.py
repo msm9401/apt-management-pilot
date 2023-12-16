@@ -173,6 +173,7 @@ CELERY_TIMEZONE = TIME_ZONE  # "Asia/Seoul"
 # AWS_ACCESS_KEY_ID = ""
 # AWS_SECRET_ACCESS_KEY = ""
 # AWS_REGION = "ap-northeast-2"
+# AWS_S3_USE_SSL = False
 
 # # S3 Storages
 # AWS_STORAGE_BUCKET_NAME = ""

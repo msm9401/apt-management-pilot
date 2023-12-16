@@ -7,11 +7,13 @@ class MediaBucketMapper:
         # assert params.count("endpoint_url")
         assert params.count("aws_access_key_id")
         assert params.count("aws_secret_access_key")
+        assert params.count("use_ssl")
         self.s3_client = boto3.resource(
             "s3",
             # endpoint_url=kwargs.get("endpoint_url"),
             aws_access_key_id=kwargs.get("aws_access_key_id"),
             aws_secret_access_key=kwargs.get("aws_secret_access_key"),
+            use_ssl=kwargs.get("use_ssl"),
             aws_session_token=None,
             config=boto3.session.Config(signature_version="s3v4"),
             verify=False,

@@ -12,3 +12,7 @@ scrape_configs:
       - targets: ["web:8000"]
         labels:
           app: django
+
+  - job_name: flower-metrics
+    static_configs:
+      - targets: ["flower:5555"]

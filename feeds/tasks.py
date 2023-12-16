@@ -10,6 +10,7 @@ def upload_photo(filename):
     media_bucket_client = MediaBucketMapper(
         aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
         aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        use_ssl=settings.AWS_S3_USE_SSL,
     )
 
     media_bucket_client.upload_file_from_tmp(
