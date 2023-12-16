@@ -35,7 +35,7 @@
 
 ### 프로젝트 도커 개발 환경 구성도
 
-![KakaoTalk_20231119_224816664](https://github.com/msm9401/apt-management-pilot/assets/70134073/3f9b40ed-be19-458b-86c5-2358117f164c)
+![KakaoTalk_20231216_182609591](https://github.com/msm9401/apt-management-pilot/assets/70134073/507bb7fe-4a07-44e9-9b22-2166d6ddcc09)
 
 ❗️ 배포 상태랑 다른 이유는 프리티어 계정의 메모리 한계.<br>
 ❗️ 배포 상태랑은 별개로 공부도 할 겸 스택은 계속 추가 예정.
@@ -209,7 +209,7 @@ RUN chmod +x /usr/src/app/entrypoint.sh
 
 COPY . /usr/src/app/
 
-ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]
+# ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]
 ```
 
 <br>
