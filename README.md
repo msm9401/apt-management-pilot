@@ -63,19 +63,18 @@
   - 항상 유저가 약 100명부터 그래프가 확 꺾이기 시작하고 rps가 갑자기 0으로 되는 현상이 있었는데 max_connections 설정이 100으로 설정되어 있어서 늘려주었음<br><br>
 
 - **한계점 & 개선해야 할 점 & 계획?**
+
   - 로컬 테스트 환경이라 실 서비스와는 괴리가 큼
   - 아직 모니터링 환경을 구축하지 않았음
   - 모니터링 환경을 구축해서 그래프 꺾이는 지점에서의 cpu, 메모리 등 리소스 사용률을 확인 후 서버를 늘려주던지 DBCP의 connection 상태를 확인해서 django와 postgresql의 connection 설정값을 바꿔주던지 결정할 수 있음
   - redis를 브로커로 이용해서 celery와 함께 작업을 비동기적으로 처리<br><br>
 
-❗️ 혼자 독학으로 진행하는 프로젝트라 잘못된 내용이 있을 수 있습니다.<br>
-
-  </div>
-  </details>
-<details>
-  <summary> Index를 이용해서 쿼리 속도 개선하기</summary><br>
-<div markdown="1">
-pagination을 적용하면서 유난히 오래 걸리는 쿼리문이 발생하였다.<br><br>
+    </div>
+    </details>
+  <details>
+    <summary> Index를 이용해서 쿼리 속도 개선하기</summary><br>
+  <div markdown="1">
+  pagination을 적용하면서 유난히 오래 걸리는 쿼리문이 발생하였다.<br><br>
 
 ![SmartSelectImage_2023-09-10-23-47-51](https://github.com/msm9401/apt-management-pilot/assets/70134073/02c409a0-d0dd-4839-babf-ca23e0593a3f)
 
@@ -149,6 +148,53 @@ kapt_code(단지 코드)에 대한 Index를 추가한 결과 covering Index 처�
 </div>
 </details>
 
+<details>
+  <summary> celery를 이용한 이미지 비동기 업로드</summary><br>
+<div markdown="1">
+장고에서 유저의 Request는 장고가 Response을 줄 때까지 나머지 Request는 아무것도 하지 못하고 기다리고 있다(일반적으로). 즉 오래 걸리는 작업이 있으면 그 작업이 끝날 때까지 나머지 요청들은 그냥 기다려야 한다. <br>
+현재 프로젝트에서 가장 오래 걸리는 작업으로는 이미지 업로드가 있는데 이미지 파일이 커질수록 한 요청에 대한 응답을 받기까지 걸리는 시간이 길어지게 되고 이 요청들이 쌓이게 되면 유저한테 최악의 경험을 선사해 줄 것이다. <br>
+그래서 celery를 이용해서 이미지 업로드같이 오래 걸리는 작업은 celery worker에 넘겨버리고 django는 다른 요청을 받을 수 있도록 비동기 처리를 해보자.<br><br>
+
+- **과정 & 오류 해결**
+
+  - 여기서 고려해야 할 점은 celery task에 전송되는 모든 데이터는 JSON serializer가 가능해야 하기 때문에 그냥 이미지 파일 형식을 task에 줘버리면 `TypeError: Object of type Request is not JSON serializable` , `kombu.exceptions.EncodeError: Object of type Request is not JSON serializable` 이런 에러를 만난다.
+  - JSON 직렬화할 수 없어서 나오는 에러다. 인수로 이미지 이름을 전달하고 s3 버킷과 직접 상호 작용할 수 있게 설정해 주면 된다.
+  - 참고로 임시로 저장했다가 s3에 업로드되기 때문에 임시로 저장된 파일들을 지워주지 않으면 서버에 계속 쌓이게 된다. 업로드 했으면 임시파일은 지워주자.
+  - 장고 컨테이너에서 celery를 실행시켰을 때는 아무 이상 없이 잘 되다가 celeryworker 컨테이너를 따로 띄우고 실행시켰을 때 `FileNotFoundError(2, 'No such file or directory')`가 뜬다.
+  - task에 작업을 위임하면 작업자 컴퓨터에서 이 파일을 가져오려고 하는데 celeryworker 컨테이너에서 이 파일을 인식하지 못해서 생긴 문제다. 즉, 장고 컨테이너에 생기는 임시 파일을 celeryworker 컨테이너에서도 인식할 수 있도록 볼륨 마운트를 잡아주면 해결된다.<br><br>
+
+- **Celery 적용 전 ( 8mb 이미지 업로드 )**
+
+  <center><img src="https://github.com/msm9401/apt-management-pilot/assets/70134073/b8bc1fda-cdb2-4062-8266-ac3b3dc898d0" width="400" height="200"/></center>
+
+  - 서버로부터 응답을 받기까지 1.58s<br><br>
+
+- **Celery 적용 후 ( 8mb 이미지 업로드 )**
+
+  <center><img src="https://github.com/msm9401/apt-management-pilot/assets/70134073/ca20f58e-73a0-40d4-b464-d31a07a720c5" width="400" height="200"/></center>
+
+  - 서버로부터 응답을 받기까지 138.34ms
+  - 결과 : 1.58s --> 138.34ms<br><br>
+
+  <center><img src="https://github.com/msm9401/apt-management-pilot/assets/70134073/eb8ed447-3b4c-48c6-9ac6-5d4f094c6efc" width="400" height="200"/></center>
+
+  - 용량이 작은 이미지를 업로드 했을때 결과 ( 48.3kb 이미지 업로드 )
+  - 서버로부터 응답을 받기까지 시간이 차이가 크게 없다.<br><br>
+
+  <center><img src="https://github.com/msm9401/apt-management-pilot/assets/70134073/7a684fd3-0f98-45d1-b294-386231fa8a60" width="600" height="200"/></center>
+
+  - flower 화면<br><br>
+
+- **결론**
+
+  - celery 최적화 부분은 아직 고려하지 않고 도입만 했을 뿐인데 괜찮게 성능 개선이 되었다.
+  - 앞으로 celery 안정화, 최적화 부분도 신경을 써야 된다. 특히 MQ로 redis를 쓰기 때문에 rabbitMQ보다 신경 쒀줘야 하는 부분이 있는 걸로 알고 있다.
+
+</div>
+</details><br>
+
+❗️ 혼자 독학으로 진행하는 프로젝트라 잘못된 내용이 있을 수 있습니다.<br>
+
 ---
 
 ---
@@ -208,8 +254,6 @@ COPY entrypoint.sh /usr/src/app/
 RUN chmod +x /usr/src/app/entrypoint.sh
 
 COPY . /usr/src/app/
-
-# ENTRYPOINT ["sh", "/usr/src/app/entrypoint.sh"]
 ```
 
 <br>
