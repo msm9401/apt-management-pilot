@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
+from guest_user.functions import is_guest_user
 
 from .serializers import FeedListSerializer, FeedDetailSerializer
 from comments.serializers import CommentDetailSerializer
@@ -46,6 +47,10 @@ class FeedList(APIView, PaginationHandlerMixin):
 
     # 피드 생성
     def post(self, request, kapt_name):
+        # 게스트 유저는 피드 생성 금지
+        if is_guest_user(request.user):
+            raise PermissionDenied
+
         kapt_code = request.user.check_my_house(kapt_name=kapt_name)
 
         serializer = FeedDetailSerializer(data=request.data)
@@ -96,6 +101,10 @@ class FeedDetail(APIView):
 
     # 피드에 대한 댓글 추가
     def post(self, request, kapt_name, pk):
+        # 게스트 유저는 댓글 생성 금지
+        if is_guest_user(request.user):
+            raise PermissionDenied
+
         serializer = CommentDetailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)  # 400
         serializer.save(

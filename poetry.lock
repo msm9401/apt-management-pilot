@@ -375,6 +375,14 @@ docs = ["furo (>=2021.8.17b43,<2021.9.0)", "sphinx (>=3.5.0)", "sphinx-notfound-
 testing = ["coverage[toml] (>=5.0a4)", "pytest (>=4.6.11)"]
 
 [[package]]
+name = "django-guest-user"
+version = "0.5.5"
+description = "A Django app that lets visitors interact with your site without registration."
+category = "main"
+optional = false
+python-versions = ">=3.8,<4.0"
+
+[[package]]
 name = "django-prometheus"
 version = "2.3.1"
 description = "Django middlewares to monitor your application with Prometheus.io."
@@ -1089,7 +1097,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "ae5921ddc90b99d2a10dc26f910a87f1e23018241b0f990fe03326ac58913a82"
+content-hash = "edc58351be18bb1619be1fce5a663801cc2857e3a19b9bae5f87718da0ba5e8c"
 
 [metadata.files]
 amqp = [
@@ -1457,6 +1465,10 @@ django-debug-toolbar = [
 django-environ = [
     {file = "django-environ-0.9.0.tar.gz", hash = "sha256:bff5381533056328c9ac02f71790bd5bf1cea81b1beeb648f28b81c9e83e0a21"},
     {file = "django_environ-0.9.0-py2.py3-none-any.whl", hash = "sha256:f21a5ef8cc603da1870bbf9a09b7e5577ab5f6da451b843dbcc721a7bca6b3d9"},
+]
+django-guest-user = [
+    {file = "django_guest_user-0.5.5-py3-none-any.whl", hash = "sha256:dd77658c45927df584ed69dfd800144593a2ad53246ed325b3c0d0cac58cf1b1"},
+    {file = "django_guest_user-0.5.5.tar.gz", hash = "sha256:a170624c27914dee471f3c6b9574dca246ca9e01c7bd1eae83c9c2b3579aac22"},
 ]
 django-prometheus = [
     {file = "django-prometheus-2.3.1.tar.gz", hash = "sha256:f9c8b6c780c9419ea01043c63a437d79db2c33353451347894408184ad9c3e1e"},

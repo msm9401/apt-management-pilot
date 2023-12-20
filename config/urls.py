@@ -25,6 +25,7 @@ urlpatterns = [
     path("api/v1/houses/", include("houses.urls")),
     path("api/v1/users/", include("users.urls")),
     # path("__debug__/", include("debug_toolbar.urls")),
+    path("convert/", include("guest_user.urls")),
 ]
 
 admin.site.site_header = "아파트 관리"

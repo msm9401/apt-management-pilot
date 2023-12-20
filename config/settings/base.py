@@ -44,6 +44,7 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "storages",
     "django_prometheus",
+    "guest_user",
 ]
 
 INSTALLED_APPS = SYSTEM_APPS + CUSTOM_APPS + THIRD_PARTY_APPS
@@ -106,6 +107,12 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
 }
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    # it should be the last entry to prevent unauthorized access
+    "guest_user.backends.GuestBackend",
+]
 
 # CACHES = {
 #     "default": {
