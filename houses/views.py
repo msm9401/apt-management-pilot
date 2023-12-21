@@ -23,14 +23,14 @@ def hello_guest(request):
     """
     - 임시 유저 로그인에 필요한 토큰과 아파트 미리 설정
     - 토큰 반환함으로 프론트에서 받아서 바로 로그인 시키면 됨.
-    - {"token": temp_token값}
+    - {"token": str}
     """
     # 임시 로그인에 필요한 토큰 생성
-    temp_token = AuthToken.objects.create(request.uset)[1]
+    temp_token = AuthToken.objects.create(request.user)[1]
 
     # 임시 유저의 아파트 설정 후 저장
     temp_house = Apartment.objects.filter(kapt_name__in=["용인신갈푸르지오", "분당 파크뷰"])
-    list(map(lambda house: request.user.my_houses(house), temp_house))
+    list(map(lambda house: request.user.my_houses.add(house), temp_house))
     request.user.save()
 
     return JsonResponse({"token": temp_token})

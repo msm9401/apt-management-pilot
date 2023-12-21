@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import get_object_or_404
 from rest_framework import status
+from guest_user.functions import is_guest_user
 
 from .models import Comment
 from .serializers import CommentDetailSerializer
@@ -28,6 +29,10 @@ class FeedComment(APIView):
 
     # 댓글에 대한 대댓글 추가
     def post(self, request, kapt_name, pk):
+        # 게스트 유저는 대댓글 생성 금지
+        if is_guest_user(request.user):
+            raise PermissionDenied
+
         comment = self.get_object(kapt_name, pk)
 
         # 대댓글에는 댓글을 허용하지 않음

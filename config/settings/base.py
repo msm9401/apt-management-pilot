@@ -100,7 +100,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
+        # "rest_framework.authentication.SessionAuthentication",
         "knox.auth.TokenAuthentication",
     ],
     "EXCEPTION_HANDLER": "config.exceptions.custom_exception_handler",
@@ -113,6 +113,11 @@ AUTHENTICATION_BACKENDS = [
     # it should be the last entry to prevent unauthorized access
     "guest_user.backends.GuestBackend",
 ]
+
+# default "guest_user.functions.generate_uuid_username"
+GUEST_USER_NAME_GENERATOR = "guest_user.functions.generate_numbered_username"
+GUEST_USER_NAME_PREFIX = "일단구경만"  # default "Guest"
+GUEST_USER_NAME_SUFFIX_DIGITS = 6  # default 4
 
 # CACHES = {
 #     "default": {
