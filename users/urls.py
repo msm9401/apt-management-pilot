@@ -9,6 +9,7 @@ urlpatterns = [
     path("signup", views.CreateAccount.as_view(), name="signup"),
     path("login", views.LogIn.as_view(), name="login"),
     path("logout", knox_views.LogoutView.as_view(), name="logout"),
+    path("guest", views.hello_guest),
     # path("logout", views.LogOut.as_view(), name="logout"),
     path("logoutall", knox_views.LogoutAllView.as_view(), name="logout_all"),
     # path("myprofile", views.MyProfile.as_view(), name="my_profile"),

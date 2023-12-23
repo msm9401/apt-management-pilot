@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from datetime import timedelta
 
 
 SECRET_KEY = os.environ.get(
@@ -118,6 +119,12 @@ AUTHENTICATION_BACKENDS = [
 GUEST_USER_NAME_GENERATOR = "guest_user.functions.generate_numbered_username"
 GUEST_USER_NAME_PREFIX = "일단구경만"  # default "Guest"
 GUEST_USER_NAME_SUFFIX_DIGITS = 6  # default 4
+GUEST_USER_MAX_AGE = 21600  # 6시간
+
+REST_KNOX = {
+    "TOKEN_TTL": timedelta(weeks=4),  # default: 10
+    "TOKEN_LIMIT_PER_USER": 4,  # default: None
+}
 
 # CACHES = {
 #     "default": {
