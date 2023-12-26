@@ -3,8 +3,8 @@ version: "3"
 services:
   nginx:
     build: ./nginx
-    volumes:
-      - static_volume:/home/appuser/static
+    hostname: nginx
+    container_name: nginx
     ports:
       - 80:80
     depends_on:
@@ -14,10 +14,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
+    hostname: django
+    container_name: django
     command: ./entrypoint.prod.sh
     volumes:
       - ./:/home/appuser/
-      - static_volume:/home/appuser/static
     expose:
       - 8000
     ports:
@@ -25,24 +26,12 @@ services:
     env_file:
       - ./.env.prod
     depends_on:
-      - db
       - redis
-
-  db:
-    image: postgres:14.4-alpine
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    env_file:
-      - ./.env.postgres.prod
-    ports:
-      - "5432:5432"
 
   redis:
     image: redis:alpine
+    hostname: redis
+    container_name: redis
     command: redis-server --requirepass apt_management_password
     ports:
       - "6000:6379"
-
-volumes:
-  postgres_data:
-  static_volume:

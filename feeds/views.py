@@ -55,20 +55,18 @@ class FeedList(APIView, PaginationHandlerMixin):
 
         serializer = FeedDetailSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)  # 400
-        new_feed = serializer.save(
+        serializer.save(
             user=request.user,
             house=Apartment.objects.get(kapt_code=kapt_code),
         )
 
         if request.FILES:
-            new_photo = Photo(
+            Photo(
                 user=request.user,
                 house=Apartment.objects.get(kapt_code=kapt_code),
                 file=request.FILES["photos[]"],
-                feed=new_feed,
-            )
-            new_photo.save()
-            upload_photo.delay(new_photo.file.name)
+                feed=Feed.objects.latest("created_at"),
+            ).save()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
