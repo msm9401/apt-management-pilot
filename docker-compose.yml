@@ -50,6 +50,19 @@ services:
       - redis
       - db
 
+  celerybeat:
+    build: .
+    container_name: celerybeat
+    command: "celery -A config beat --loglevel=DEBUG"
+    volumes:
+      - ./:/usr/src/app/
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - redis
+      - db
+      - celeryworker
+
   flower:
     build: .
     hostname: flower

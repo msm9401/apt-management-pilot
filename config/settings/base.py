@@ -46,6 +46,7 @@ THIRD_PARTY_APPS = [
     "storages",
     "django_prometheus",
     "guest_user",
+    "django_celery_beat",
 ]
 
 INSTALLED_APPS = SYSTEM_APPS + CUSTOM_APPS + THIRD_PARTY_APPS
@@ -119,7 +120,7 @@ AUTHENTICATION_BACKENDS = [
 GUEST_USER_NAME_GENERATOR = "guest_user.functions.generate_numbered_username"
 GUEST_USER_NAME_PREFIX = "일단구경만"  # default "Guest"
 GUEST_USER_NAME_SUFFIX_DIGITS = 6  # default 4
-GUEST_USER_MAX_AGE = 21600  # 6시간
+GUEST_USER_MAX_AGE = 86400  # 1일
 
 REST_KNOX = {
     "TOKEN_TTL": timedelta(weeks=4),  # default: 10

@@ -2,8 +2,10 @@ import socket
 import colorlog
 import logging
 from json_log_formatter import JSONFormatter
+from celery.schedules import crontab
 
 from .base import *
+from batch import delete_expired_guest_users
 
 
 DEBUG = True
@@ -167,6 +169,13 @@ if IN_DOCKER:
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 CELERY_TIMEZONE = TIME_ZONE  # "Asia/Seoul"
+
+CELERY_BEAT_SCHEDULE = {
+    "delete_expired_guest_users": {
+        "task": "batch.delete_expired_guest_users.delete_expired_guest_users",
+        "schedule": crontab(minute=0, hour=0),  # 자정
+    }
+}
 
 
 # 이미지 celery 업로드 테스트
